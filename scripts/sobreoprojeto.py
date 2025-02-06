@@ -42,7 +42,9 @@ def show():
                 Os dados foram obtidos das informações educacionais e socioeconômicas dos estudantes da Passos Mágicos, incluindo:
                 <ul>
                     <li>
-                        <b><a style='text-decoration:none', href='https://drive.google.com/drive/folders/1Z1j6uzzCOgjB2a6i3Ym1pmJRsasfm7cD'>duas bases de dados com as características de desenvolvimento educacional e questões 
+                        <b><a style='text-decoration:none', href='https://drive.google.com/drive/folders/1Z1j6uzzCOgjB2a6i3Ym1pmJRsasfm7cD'> 
+                        
+                        duas bases de dados com as características de desenvolvimento educacional e questões 
         socioeconômicas dos estudantes e um dicionário de dados com o mapeamento de todas as variáveis.
                     
         
