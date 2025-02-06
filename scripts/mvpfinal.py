@@ -1,3 +1,4 @@
+pip install matplotlib
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -6,7 +7,6 @@ import seaborn as sns
 from sklearn.metrics import confusion_matrix, roc_curve, auc
 from sklearn.preprocessing import label_binarize
 from pathlib import Path
-pip install matplotlib
 
 
 # Função para carregar dados
