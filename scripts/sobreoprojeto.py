@@ -26,15 +26,8 @@ def show():
         '''
         <div style="text-align: justify;">
             <p>
-                Este projeto utiliza a metodologia CRISP-DM (CRoss Industry Standard Process for Data Mining), amplamente aplicada em projetos de dados. A metodologia segue 6 etapas principais:
-                <ul>
-                    <li><b>Análise do negócio (business understanding):</b> Entendimento do produto/serviço, público-alvo e estratégias do setor;</li>
-                    <li><b>Análise dos dados (data understanding):</b> Seleção e avaliação dos dados úteis para a solução do problema;</li>
-                    <li><b>Preparação dos dados (data preparation):</b> Pré-processamento dos dados para atender aos requisitos das soluções propostas;</li>
-                    <li><b>Modelagem (modeling):</b> Extração de insights úteis ao negócio por meio de modelagem dos dados;</li>
-                    <li><b>Avaliação (evaluation):</b> Verificação do desempenho do modelo aplicado;</li>
-                    <li><b>Implementação (deployment):</b> Disponibilização dos resultados às partes interessadas, como dashboards ou relatórios.</li>
-                </ul>
+                O Datathon propõe a criação de uma proposta preditiva. Os participantes criarão um modelo preditivo para prever o comportamento dos estudantes com base em variáveis cruciais. A ideia é utilizar conhecimentos aprendidos no curso, como técnicas de machine learning, deep learning ou processamento de linguagem natural, para propor soluções de algoritmos supervisionados ou não supervisionados.
+                
             </p>
         </div>
         ''',
