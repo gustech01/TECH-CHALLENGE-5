@@ -68,29 +68,4 @@ def show():
         return
 
     with tab1:
-        st.subheader("Matriz de Confusão - Regressão Multinomial")
-        st.write(matriz_multinomial)
-
-    with tab2:
-        st.subheader("Curvas ROC - Regressão Multinomial")
-        plot_curvas_roc(curva_roc_multinomial, "Curvas ROC - Regressão Multinomial")
-
-    with tab3:
-        st.subheader("Matriz de Confusão - XGBoost")
-        st.write(matriz_xgboost)
-
-    with tab4:
-        st.subheader("Curvas ROC - XGBoost")
-        plot_curvas_roc(curva_roc_xgboost, "Curvas ROC - XGBoost")
-
-    with tab5:
-        st.subheader("Matriz de Confusão - Rede Neural")
-        st.write(matriz_rede_neural)
-
-    with tab6:
-        st.subheader("Curvas ROC - Rede Neural")
-        plot_curvas_roc(curva_roc_rede_neural, "Curvas ROC - Rede Neural")
-
-# Exibir o aplicativo
-if __name__ == "__main__":
-    show()
+        st.subheader("Matriz de Conf
