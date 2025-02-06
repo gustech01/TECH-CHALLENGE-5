@@ -59,9 +59,9 @@ def show():
         st.subheader("Curvas ROC - Regressão Multinomial")
         for classe in curva_roc_multinomial['Classe'].unique():
             dados_classe = curva_roc_multinomial[curva_roc_multinomial['Classe'] == classe]
-            st.line_chart(dados_classe.set_index('FPR')['TPR'], height=400, width=700)
+            st.line_chart(dados_classe.set_index('FPR')['TPR'], height=400, width=700, use_container_width=True)
         st.write("Linha de Referência")
-        st.line_chart(pd.DataFrame({"FPR": [0, 1], "TPR": [0, 1]}).set_index('FPR'), height=400, width=700)
+        st.line_chart(pd.DataFrame({"FPR": [0, 1], "TPR": [0, 1]}).set_index('FPR'), height=400, width=700, use_container_width=True)
 
     with tab3:
         st.subheader("Matriz de Confusão - XGBoost")
@@ -71,9 +71,9 @@ def show():
         st.subheader("Curvas ROC - XGBoost")
         for classe in curva_roc_xgboost['Classe'].unique():
             dados_classe = curva_roc_xgboost[curva_roc_xgboost['Classe'] == classe]
-            st.line_chart(dados_classe.set_index('FPR')['TPR'], height=400, width=700)
+            st.line_chart(dados_classe.set_index('FPR')['TPR'], height=400, width=700, use_container_width=True)
         st.write("Linha de Referência")
-        st.line_chart(pd.DataFrame({"FPR": [0, 1], "TPR": [0, 1]}).set_index('FPR'), height=400, width=700)
+        st.line_chart(pd.DataFrame({"FPR": [0, 1], "TPR": [0, 1]}).set_index('FPR'), height=400, width=700, use_container_width=True)
 
     with tab5:
         st.subheader("Matriz de Confusão - Rede Neural")
@@ -83,9 +83,9 @@ def show():
         st.subheader("Curvas ROC - Rede Neural")
         for classe in curva_roc_rede_neural['Classe'].unique():
             dados_classe = curva_roc_rede_neural[curva_roc_rede_neural['Classe'] == classe]
-            st.line_chart(dados_classe.set_index('FPR')['TPR'], height=400, width=700)
+            st.line_chart(dados_classe.set_index('FPR')['TPR'], height=400, width=700, use_container_width=True)
         st.write("Linha de Referência")
-        st.line_chart(pd.DataFrame({"FPR": [0, 1], "TPR": [0, 1]}).set_index('FPR'), height=400, width=700)
+        st.line_chart(pd.DataFrame({"FPR": [0, 1], "TPR": [0, 1]}).set_index('FPR'), height=400, width=700, use_container_width=True)
 
 # Exibir o aplicativo
 if __name__ == "__main__":
