@@ -15,10 +15,10 @@ def show():
         '''
         <div style="text-align: justify;">
             <p>
-                Este projeto tem por objetivo o desenvolvimento de um dashboard interativo capaz de gerar insights relevantes para tomada de decisão no que diz respeito ao negócio do petróleo Brent, o que inclui a implementação de um modelo de Machine Learning que traga o forecasting dos preços.
+                O grande objetivo do Datathon é permitir que cientistas de dados criem uma proposta preditiva para demonstrar o impacto que a ONG "Passos Mágicos" tem realizado na comunidade que atende. A associação busca instrumentalizar o uso da educação como ferramenta para a mudança das condições de vida das crianças e jovens em vulnerabilidade social.
             </p>
             <p>
-                Esta aplicação é um MVP. O projeto completo está disponível em <b><a style='text-decoration:none', href='https://github.com/gustech01/TECH-CHALLENGE-4-FIAP'>repositório</a></b> GitHub.
+                Esta aplicação é um MVP. O projeto completo está disponível em MUDAR <b><a style='text-decoration:none', href='https://github.com/gustech01/TECH-CHALLENGE-4-FIAP'>repositório</a></b> GitHub.
             </p>
         </div>
         ''',
