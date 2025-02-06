@@ -1,7 +1,6 @@
 import streamlit as st
 from pathlib import Path
 
-@st.cache_resource
 def carregar_imagem(caminho):
     """Carrega o caminho da imagem."""
     imagem_path = Path(caminho)
@@ -17,10 +16,12 @@ def show():
     with right:
         imagem = carregar_imagem('imagens/fiap.png')
         if imagem:
-            st.image(imagem)
+            st.image(imagem, use_column_width=True)
+        else:
+            st.error("Erro ao carregar a imagem. Verifique o caminho e tente novamente.")
 
     # Título do projeto
-    st.title('Sobre o Projeto')
+    st.title('Sobre o Projeto Datathon')
   
     st.markdown(
         '''
@@ -40,8 +41,16 @@ def show():
             <p>
                 <b>Base de Dados Disponível:</b> A base de dados completa pode ser acessada <a href="https://drive.google.com/drive/folders/1Z1j6uzzCOgjB2a6i3Ym1pmJRsasfm7cD" target="_blank">neste link</a>.
             </p>
-            
+            <p>
+                <b>Entrega do Projeto:</b> Os participantes devem entregar o modelo preditivo com deploy realizado no Streamlit. A entrega deve incluir todos os arquivos utilizados e o código-fonte, que podem ser compartilhados por meio de um repositório no GitHub, juntamente com o link para o modelo preditivo.
+            </p>
+            <p>
+                Ao focar na proposta preditiva, você estará contribuindo diretamente para o desenvolvimento de soluções que podem transformar a vida dos estudantes atendidos pela ONG "Passos Mágicos".
+            </p>
         </div>
         ''',
         unsafe_allow_html=True
     )
+
+if __name__ == "__main__":
+    show()
