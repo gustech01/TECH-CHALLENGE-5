@@ -21,22 +21,6 @@ def carregar_imagem(caminho):
         st.error(f"Imagem não encontrada: {caminho}")
         return None
 
-def plot_curvas_roc(curva_roc, tab_title):
-    df_combined = pd.DataFrame()
-    legendas = {}
-    for classe in curva_roc['Classe'].unique():
-        dados_classe = curva_roc[curva_roc['Classe'] == classe]
-        dados_classe = dados_classe.rename(columns={"TPR": f"TPR_{classe}"})
-        legendas[f"AUC_{classe}"] = f"{classe} (AUC = {((dados_classe['FPR'] - dados_classe[f'TPR_{classe}']).abs().sum()):.2f})"
-        if df_combined.empty:
-            df_combined = dados_classe[["FPR", f"TPR_{classe}"]]
-        else:
-            df_combined = pd.merge(df_combined, dados_classe[["FPR", f"TPR_{classe}"]], on="FPR", how="outer")
-    st.line_chart(df_combined.set_index('FPR'), height=400, width=700)
-    st.write("Legenda")
-    for key, value in legendas.items():
-        st.write(value)
-
 def show():
     # Logo FIAP
     left, cent, right = st.columns(3)
@@ -68,4 +52,53 @@ def show():
         return
 
     with tab1:
-        st.subheader("Matriz de Conf
+        st.subheader("Matriz de Confusão - Regressão Multinomial")
+        st.write(matriz_multinomial)
+
+    with tab2:
+        st.subheader("Curvas ROC - Regressão Multinomial")
+        df_combined_multinomial = pd.DataFrame()
+        for classe in curva_roc_multinomial['Classe'].unique():
+            dados_classe = curva_roc_multinomial[curva_roc_multinomial['Classe'] == classe]
+            dados_classe = dados_classe.rename(columns={"TPR": f"TPR_{classe}"})
+            if df_combined_multinomial.empty:
+                df_combined_multinomial = dados_classe[["FPR", f"TPR_{classe}"]]
+            else:
+                df_combined_multinomial = pd.merge(df_combined_multinomial, dados_classe[["FPR", f"TPR_{classe}"]], on="FPR", how="outer")
+        st.line_chart(df_combined_multinomial.set_index('FPR'), height=400, width=700)
+
+    with tab3:
+        st.subheader("Matriz de Confusão - XGBoost")
+        st.write(matriz_xgboost)
+
+    with tab4:
+        st.subheader("Curvas ROC - XGBoost")
+        df_combined_xgboost = pd.DataFrame()
+        for classe in curva_roc_xgboost['Classe'].unique():
+            dados_classe = curva_roc_xgboost[curva_roc_xgboost['Classe'] == classe]
+            dados_classe = dados_classe.rename(columns={"TPR": f"TPR_{classe}"})
+            if df_combined_xgboost.empty:
+                df_combined_xgboost = dados_classe[["FPR", f"TPR_{classe}"]]
+            else:
+                df_combined_xgboost = pd.merge(df_combined_xgboost, dados_classe[["FPR", f"TPR_{classe}"]], on="FPR", how="outer")
+        st.line_chart(df_combined_xgboost.set_index('FPR'), height=400, width=700)
+
+    with tab5:
+        st.subheader("Matriz de Confusão - Rede Neural")
+        st.write(matriz_rede_neural)
+
+    with tab6:
+        st.subheader("Curvas ROC - Rede Neural")
+        df_combined_nn = pd.DataFrame()
+        for classe in curva_roc_rede_neural['Classe'].unique():
+            dados_classe = curva_roc_rede_neural[curva_roc_rede_neural['Classe'] == classe]
+            dados_classe = dados_classe.rename(columns={"TPR": f"TPR_{classe}"})
+            if df_combined_nn.empty:
+                df_combined_nn = dados_classe[["FPR", f"TPR_{classe}"]]
+            else:
+                df_combined_nn = pd.merge(df_combined_nn, dados_classe[["FPR", f"TPR_{classe}"]], on="FPR", how="outer")
+        st.line_chart(df_combined_nn.set_index('FPR'), height=400, width=700)
+
+# Exibir o aplicativo
+if __name__ == "__main__":
+    show()
