@@ -1,5 +1,7 @@
 import streamlit as st
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 from pathlib import Path
 
 # Função para carregar dados
@@ -23,6 +25,15 @@ def carregar_imagem(caminho):
         st.error(f"Imagem não encontrada: {caminho}")
         return None
 
+# Função para exibir a matriz de confusão como gráfico
+def plot_matriz_confusao(df, titulo):
+    fig, ax = plt.subplots(figsize=(6, 4))
+    sns.heatmap(df, annot=True, fmt="d", cmap="Blues", ax=ax)
+    ax.set_title(titulo)
+    ax.set_xlabel("Previsões")
+    ax.set_ylabel("Valores Reais")
+    st.pyplot(fig)
+
 # Interface principal
 def show():
     # Adiciona imagem no topo (Logo FIAP)
@@ -45,11 +56,13 @@ def show():
         'Curva ROC - Rede Neural'
     ])
 
-    # 🔹 Criando tabelas deslizantes dentro das abas
+    # 🔹 Criando tabelas e gráficos dentro das abas
     with tab1:
         st.subheader("Matriz de Confusão - Multinomial")
         df_multinomial = carregar_dados('dados/matriz_multinomial.csv')
-        st.dataframe(df_multinomial, height=400, width=800)  # Scroll ativado
+        if not df_multinomial.empty:
+            st.dataframe(df_multinomial, height=200, width=400)
+            plot_matriz_confusao(df_multinomial, "Matriz de Confusão - Multinomial")
 
     with tab2:
         st.subheader("Curva ROC - Multinomial")
@@ -60,7 +73,9 @@ def show():
     with tab3:
         st.subheader("Matriz de Confusão - XGBoost")
         df_xgb = carregar_dados('dados/matriz_xgb.csv')
-        st.dataframe(df_xgb, height=400, width=800)  # Scroll ativado
+        if not df_xgb.empty:
+            st.dataframe(df_xgb, height=200, width=400)
+            plot_matriz_confusao(df_xgb, "Matriz de Confusão - XGBoost")
 
     with tab4:
         st.subheader("Curva ROC - XGBoost")
@@ -71,7 +86,9 @@ def show():
     with tab5:
         st.subheader("Matriz de Confusão - Rede Neural")
         df_nn = carregar_dados('dados/matriz_nn.csv')
-        st.dataframe(df_nn, height=400, width=800)  # Scroll ativado
+        if not df_nn.empty:
+            st.dataframe(df_nn, height=200, width=400)
+            plot_matriz_confusao(df_nn, "Matriz de Confusão - Rede Neural")
 
     with tab6:
         st.subheader("Curva ROC - Rede Neural")
