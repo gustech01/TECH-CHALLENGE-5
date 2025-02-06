@@ -43,7 +43,7 @@ def show():
     </p>
     <ul>
         <li>
-            <b><a style='text-decoration:none;color:blue' href='https://drive.google.com/drive/folders/1Z1j6uzzCOgjB2a6i3Ym1pmJRsasfm7cD'>duas bases de dados com as características de desenvolvimento educacional e questões socioeconômicas dos estudantes e um dicionário de dados com o mapeamento de todas as variáveis</a></b>.
+            <b><a style='text-decoration:none;color:blue' href='https://drive.google.com/drive/folders/1Z1j6uzzCOgjB2a6i3Ym1pmJRsasfm7cD'></b> duas bases de dados com as características de desenvolvimento educacional e questões socioeconômicas dos estudantes e um dicionário de dados com o mapeamento de todas as variáveis</a></b>.
         </li>
     </ul>
 </div>
