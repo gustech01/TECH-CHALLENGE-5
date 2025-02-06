@@ -1,17 +1,15 @@
 import streamlit as st
 from pathlib import Path
 
-
-
-    
 @st.cache_resource
-def carregar_imagem():
-    return "imagens/fiap.png"
-
-def show():
-    left, cent, right = st.columns(3)
-    with right:
-        st.image(carregar_imagem())
+def carregar_imagem(caminho):
+    """Carrega o caminho da imagem."""
+    imagem_path = Path(caminho)
+    if imagem_path.is_file():
+        return str(imagem_path)
+    else:
+        st.error(f"Imagem não encontrada: {caminho}")
+        return None
 
 def show():
     # Layout inicial com imagem no canto direito
