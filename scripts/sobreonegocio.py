@@ -14,10 +14,7 @@ def show():
         '''
         <div style="text-align: justify;">
             <p>
-                A cotação do petróleo, medida em dólares por barril, é definida pela oferta e demanda internacional da commodity. 
-                As duas principais referências comerciais são o Brent e o West Texas Intermediate (WTI). O Brent é extraído no Mar 
-                do Norte e negociado na Bolsa de Londres, enquanto o WTI vem dos Estados Unidos e, historicamente, possui um valor 
-                inferior devido ao excesso de oferta no mercado americano.
+                A ONG "Passos Mágicos" é dedicada a melhorar a vida de crianças e jovens em vulnerabilidade social através da educação. Com base em dados extensivos de desenvolvimento educacional de 2020, 2021 e 2022, a ONG está focada em criar oportunidades de mudança positiva e progresso para essas comunidades.
             </p>
         </div>
         ''',
