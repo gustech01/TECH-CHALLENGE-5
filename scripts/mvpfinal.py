@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from pathlib import Path
+from sklearn.metrics import auc
 
 @st.cache_data(show_spinner=True)
 def carregar_dados(caminho):
@@ -91,5 +92,5 @@ def show():
         st.line_chart(pd.DataFrame({"x": [0, 1], "y": [0, 1]}), height=400, width=700)
 
 # Exibir o aplicativo
-if __name__ == "main":
+if __name__ == "__main__":
     show()
