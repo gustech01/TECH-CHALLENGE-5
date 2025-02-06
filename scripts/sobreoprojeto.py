@@ -15,7 +15,10 @@ def show():
     # Layout inicial com imagem no canto direito
     left, cent, right = st.columns(3)
     with right:
-        imagem = carregar_imagem('imagens/fiap.png')
+        imagem = import os
+
+imagem = carregar_imagem(os.path.join(os.getcwd(), 'imagens/fiap.png'))
+
         if imagem:
             st.image(imagem)
 
