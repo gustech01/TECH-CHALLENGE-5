@@ -57,11 +57,15 @@ def show():
 
     with tab2:
         st.subheader("Curvas ROC - Regressão Multinomial")
+        df_combined_multinomial = pd.DataFrame()
         for classe in curva_roc_multinomial['Classe'].unique():
             dados_classe = curva_roc_multinomial[curva_roc_multinomial['Classe'] == classe]
-            st.line_chart(dados_classe.set_index('FPR')['TPR'], height=400, width=700, use_container_width=True)
-        st.write("Linha de Referência")
-        st.line_chart(pd.DataFrame({"FPR": [0, 1], "TPR": [0, 1]}).set_index('FPR'), height=400, width=700, use_container_width=True)
+            dados_classe = dados_classe.rename(columns={"TPR": f"TPR_{classe}"})
+            if df_combined_multinomial.empty:
+                df_combined_multinomial = dados_classe[["FPR", f"TPR_{classe}"]]
+            else:
+                df_combined_multinomial = pd.merge(df_combined_multinomial, dados_classe[["FPR", f"TPR_{classe}"]], on="FPR", how="outer")
+        st.line_chart(df_combined_multinomial.set_index('FPR'), height=400, width=700)
 
     with tab3:
         st.subheader("Matriz de Confusão - XGBoost")
@@ -69,11 +73,15 @@ def show():
 
     with tab4:
         st.subheader("Curvas ROC - XGBoost")
+        df_combined_xgboost = pd.DataFrame()
         for classe in curva_roc_xgboost['Classe'].unique():
             dados_classe = curva_roc_xgboost[curva_roc_xgboost['Classe'] == classe]
-            st.line_chart(dados_classe.set_index('FPR')['TPR'], height=400, width=700, use_container_width=True)
-        st.write("Linha de Referência")
-        st.line_chart(pd.DataFrame({"FPR": [0, 1], "TPR": [0, 1]}).set_index('FPR'), height=400, width=700, use_container_width=True)
+            dados_classe = dados_classe.rename(columns={"TPR": f"TPR_{classe}"})
+            if df_combined_xgboost.empty:
+                df_combined_xgboost = dados_classe[["FPR", f"TPR_{classe}"]]
+            else:
+                df_combined_xgboost = pd.merge(df_combined_xgboost, dados_classe[["FPR", f"TPR_{classe}"]], on="FPR", how="outer")
+        st.line_chart(df_combined_xgboost.set_index('FPR'), height=400, width=700)
 
     with tab5:
         st.subheader("Matriz de Confusão - Rede Neural")
@@ -81,11 +89,15 @@ def show():
 
     with tab6:
         st.subheader("Curvas ROC - Rede Neural")
+        df_combined_nn = pd.DataFrame()
         for classe in curva_roc_rede_neural['Classe'].unique():
             dados_classe = curva_roc_rede_neural[curva_roc_rede_neural['Classe'] == classe]
-            st.line_chart(dados_classe.set_index('FPR')['TPR'], height=400, width=700, use_container_width=True)
-        st.write("Linha de Referência")
-        st.line_chart(pd.DataFrame({"FPR": [0, 1], "TPR": [0, 1]}).set_index('FPR'), height=400, width=700, use_container_width=True)
+            dados_classe = dados_classe.rename(columns={"TPR": f"TPR_{classe}"})
+            if df_combined_nn.empty:
+                df_combined_nn = dados_classe[["FPR", f"TPR_{classe}"]]
+            else:
+                df_combined_nn = pd.merge(df_combined_nn, dados_classe[["FPR", f"TPR_{classe}"]], on="FPR", how="outer")
+        st.line_chart(df_combined_nn.set_index('FPR'), height=400, width=700)
 
 # Exibir o aplicativo
 if __name__ == "__main__":
