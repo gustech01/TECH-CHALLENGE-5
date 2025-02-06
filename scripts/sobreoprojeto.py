@@ -15,7 +15,7 @@ def show():
             st.error("Imagem não encontrada. Verifique o caminho e tente novamente.")
 
     # Título do projeto
-    st.title('Sobre o Projeto Datathon')
+    st.title('Sobre o Projeto')
   
     st.markdown(
         '''
