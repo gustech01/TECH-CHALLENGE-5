@@ -20,7 +20,7 @@ def show():
             st.image(imagem)
 
     # Título do projeto
-    st.title('Sobre o Projeto Datathon')
+    st.title('Sobre o Projeto')
   
     st.markdown(
         '''
