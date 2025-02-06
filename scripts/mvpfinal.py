@@ -30,10 +30,10 @@ def show():
             st.image(imagem)
 
     # Título
-    st.title('MVP Petróleo Brent')
+    st.title('Modelos Preditivos')
 
     # Layout do aplicativo
-    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(['Real x Forecast', 'Dados Brutos', 'Matriz de Confusão', 'Curvas ROC', 'Tab 5', 'Tab 6'])
+    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(['Matriz Multinomial', 'Curva ROC Multinomial', 'Matriz XGBoost', 'Curvas ROC XGBoost', 'Matriz Rede Neural', 'Curva Rede Neural'])
 
     # Leitura dos dados
     dados = carregar_dados("dataset/Europe_Brent_Spot_Price_FOB.csv")
