@@ -37,12 +37,7 @@ def show():
             <p>
                 <b>Base de Dados:</b> Os dados fornecidos incluem informações detalhadas sobre o desempenho educacional e as condições socioeconômicas dos estudantes de 2020 a 2022. Além disso, relatórios de pesquisa da Passos Mágicos estão disponíveis para ajudar no entendimento do contexto e na identificação de variáveis importantes para o modelo preditivo.
             </p>
-            <p>
-                <b>Entrega do Projeto:</b> Os participantes devem entregar o modelo preditivo com deploy realizado no Streamlit. A entrega deve incluir todos os arquivos utilizados e o código-fonte, que podem ser compartilhados por meio de um repositório no GitHub, juntamente com o link para o modelo preditivo.
-            </p>
-            <p>
-                Ao focar na proposta preditiva, você estará contribuindo diretamente para o desenvolvimento de soluções que podem transformar a vida dos estudantes atendidos pela ONG "Passos Mágicos".
-            </p>
+           
         </div>
         ''',
         unsafe_allow_html=True
