@@ -1,6 +1,20 @@
 import streamlit as st
 import pandas as pd
 from pathlib import Path
+from PIL import Image
+import os
+
+def show():
+    # Layout inicial com imagem no canto direito
+    left, cent, right = st.columns(3)
+    with right:
+        # Verifica se o arquivo de imagem existe
+        if os.path.exists('imagens/fiap.png'):
+            # Carrega e exibe a imagem
+            imagem = Image.open('imagens/fiap.png')
+            st.image(imagem, use_container_width=True)
+        else:
+            st.error("Imagem não encontrada. Verifique o caminho e tente novamente.")
 
 @st.cache_data(show_spinner=True)
 def carregar_dados(caminho):
