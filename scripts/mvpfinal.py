@@ -36,14 +36,14 @@ def show():
     tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(['Matriz Multinomial', 'Curva ROC Multinomial', 'Matriz XGBoost', 'Curvas ROC XGBoost', 'Matriz Rede Neural', 'Curva Rede Neural'])
 
     # Carregando as matrizes de confusão e curvas ROC
-    matriz_multinomial = carregar_dados("dataset/matriz_confusao_multinomial.csv")
-    curva_roc_multinomial = carregar_dados("dataset/curvas_roc_multinomial.csv")
+    matriz_multinomial = carregar_dados("datasets/matriz_confusao_multinomial.csv")
+    curva_roc_multinomial = carregar_dados("datasets/curvas_roc_multinomial.csv")
     
-    matriz_xgboost = carregar_dados("dataset/matriz_confusao_xgboost.csv")
-    curva_roc_xgboost = carregar_dados("dataset/curvas_roc_xgboost.csv")
+    matriz_xgboost = carregar_dados("datasets/matriz_confusao_xgboost.csv")
+    curva_roc_xgboost = carregar_dados("datasets/curvas_roc_xgboost.csv")
     
-    matriz_rede_neural = carregar_dados("dataset/matriz_confusao_rede_neural.csv")
-    curva_roc_rede_neural = carregar_dados("dataset/curvas_roc_rede_neural.csv")
+    matriz_rede_neural = carregar_dados("datasets/matriz_confusao_rede_neural.csv")
+    curva_roc_rede_neural = carregar_dados("datasets/curvas_roc_rede_neural.csv")
 
     if matriz_multinomial.empty or curva_roc_multinomial.empty or \
        matriz_xgboost.empty or curva_roc_xgboost.empty or \
