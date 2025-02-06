@@ -25,15 +25,6 @@ def carregar_dados(caminho):
         st.error(f"Arquivo não encontrado: {caminho}")
         return pd.DataFrame()
 
-@st.cache_resource(show_spinner=True)
-def carregar_imagem(caminho):
-    """Carrega o caminho da imagem."""
-    imagem_path = Path(caminho)
-    if imagem_path.is_file():
-        return str(imagem_path)
-    else:
-        st.error(f"Imagem não encontrada: {caminho}")
-        return None
 
 def plot_curvas_roc(curva_roc, tab_title):
     df_combined = pd.DataFrame()
