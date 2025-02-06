@@ -9,6 +9,12 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import confusion_matrix, classification_report, roc_curve, auc
 from sklearn.preprocessing import label_binarize
 
+# Certifique-se de que as bibliotecas estejam instaladas
+try:
+    import seaborn as sns
+except ImportError:
+    st.error("Seaborn não está instalado. Por favor, instale a biblioteca executando 'pip install seaborn'.")
+
 # Carregando Dataset
 file_path = "PEDE_PASSOS_DATASET_FIAP.csv"  # Ajuste para o caminho correto
 df = pd.read_csv(file_path, delimiter=";")
