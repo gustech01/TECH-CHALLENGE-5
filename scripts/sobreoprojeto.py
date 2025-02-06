@@ -26,12 +26,12 @@ def show():
         '''
         <div style="text-align: justify;">
             <p>
-                O Datathon é uma competição voltada para cientistas e analistas de dados, cujo objetivo é criar soluções inovadoras utilizando dados educacionais e socioeconômicos dos estudantes atendidos pela ONG "Passos Mágicos". Esta ONG tem como missão transformar a vida de crianças e jovens em situação de vulnerabilidade social através da educação.
+                O Datathon é uma competição dedicada a cientistas e analistas de dados, cujo objetivo é desenvolver soluções inovadoras utilizando dados educacionais e socioeconômicos dos estudantes atendidos pela ONG "Passos Mágicos". Esta ONG tem como missão transformar a vida de crianças e jovens em situação de vulnerabilidade social através da educação.
             </p>
             <p>
-                <b>Foco no Modelo Preditivo:</b> Para esta edição do Datathon, o destaque vai para a criação de um modelo preditivo capaz de prever o comportamento dos estudantes com base em variáveis cruciais. Esse modelo será fundamental para ajudar a ONG a identificar padrões e tomar decisões informadas que impactem positivamente o desenvolvimento dos alunos.
+                <b>Foco no Modelo Preditivo:</b> Nesta edição do Datathon, o destaque vai para a criação de um modelo preditivo. Este modelo tem a finalidade de prever o comportamento dos estudantes com base em variáveis cruciais, ajudando a ONG a identificar padrões e tomar decisões que impactem positivamente o desenvolvimento dos alunos.
                 <ul>
-                    <li><b>Proposta Preditiva:</b> Utilizando técnicas avançadas de aprendizado de máquina (machine learning), aprendizado profundo (deep learning) ou processamento de linguagem natural, os participantes devem desenvolver um algoritmo que faça previsões precisas. A criatividade é encorajada para encontrar as melhores soluções preditivas.</li>
+                    <li><b>Proposta Preditiva:</b> Os participantes devem utilizar técnicas avançadas de aprendizado de máquina (machine learning), aprendizado profundo (deep learning) ou processamento de linguagem natural para desenvolver um algoritmo preditivo. O objetivo é encontrar as melhores soluções criativas para realizar previsões precisas sobre o desempenho dos estudantes.</li>
                 </ul>
             </p>
             <p>
