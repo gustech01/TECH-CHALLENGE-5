@@ -1,12 +1,11 @@
 import streamlit as st
 from pathlib import Path
 
-@st.cache_resource
 def carregar_imagem(caminho):
     """Carrega o caminho da imagem."""
     imagem_path = Path(caminho)
     if imagem_path.is_file():
-        return str(imagem_path)
+        return imagem_path
     else:
         st.error(f"Imagem não encontrada: {caminho}")
         return None
@@ -15,12 +14,9 @@ def show():
     # Layout inicial com imagem no canto direito
     left, cent, right = st.columns(3)
     with right:
-        imagem = import os
-
-imagem = carregar_imagem(os.path.join(os.getcwd(), 'imagens/fiap.png'))
-
+        imagem = carregar_imagem('imagens/fiap.png')
         if imagem:
-            st.image(imagem)
+            st.image(str(imagem))
 
     # Título do projeto
     st.title('Sobre o Projeto')
