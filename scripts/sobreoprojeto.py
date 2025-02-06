@@ -1,9 +1,13 @@
 import streamlit as st
 from pathlib import Path
 
+
+
+    
 @st.cache_resource
-def carregar_imagem(caminho):
-    """Carrega o caminho da imagem."""
+def carregar_imagem():
+    return "imagens/fiap.png"
+    
     imagem_path = Path(caminho)
     if imagem_path.is_file():
         return str(imagem_path)
