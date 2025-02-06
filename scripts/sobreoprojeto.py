@@ -1,25 +1,18 @@
 import streamlit as st
-from pathlib import Path
-
-@st.cache_resource
-def carregar_imagem(caminho):
-    """Carrega o caminho da imagem."""
-    imagem_path = Path(caminho)
-    if imagem_path.is_file():
-        return str(imagem_path)
-    else:
-        st.error(f"Imagem não encontrada: {caminho}")
-        return None
+from PIL import Image
+import os
 
 def show():
     # Layout inicial com imagem no canto direito
     left, cent, right = st.columns(3)
     with right:
-        imagem = carregar_imagem('imagens/fiap.png')
-        if imagem:
+        # Verifica se o arquivo de imagem existe
+        if os.path.exists('imagens/fiap.png'):
+            # Carrega e exibe a imagem
+            imagem = Image.open('imagens/fiap.png')
             st.image(imagem, use_container_width=True)
         else:
-            st.error("Erro ao carregar a imagem. Verifique o caminho e tente novamente.")
+            st.error("Imagem não encontrada. Verifique o caminho e tente novamente.")
 
     # Título do projeto
     st.title('Sobre o Projeto Datathon')
