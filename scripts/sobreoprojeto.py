@@ -1,6 +1,7 @@
 import streamlit as st
 from pathlib import Path
 
+@st.cache_resource
 def carregar_imagem(caminho):
     """Carrega o caminho da imagem."""
     imagem_path = Path(caminho)
@@ -16,7 +17,7 @@ def show():
     with right:
         imagem = carregar_imagem('imagens/fiap.png')
         if imagem:
-            st.image(imagem, use_column_width=True)
+            st.image(imagem, use_container_width=True)
         else:
             st.error("Erro ao carregar a imagem. Verifique o caminho e tente novamente.")
 
