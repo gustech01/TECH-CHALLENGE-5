@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
 from pathlib import Path
 
 @st.cache_data(show_spinner=True)
@@ -54,78 +53,42 @@ def show():
 
     with tab1:
         st.subheader("Matriz de Confusão - Regressão Multinomial")
-        fig = px.imshow(matriz_multinomial, 
-                        x=matriz_multinomial.columns, 
-                        y=matriz_multinomial.index, 
-                        color_continuous_scale='Blues', 
-                        text_auto=True, 
-                        labels={'x': 'Predito', 'y': 'Real', 'color': 'Quantidade'})
-        fig.update_layout(title="Matriz de Confusão - Regressão Multinomial", 
-                          xaxis_title='Predito', 
-                          yaxis_title='Real')
-        st.plotly_chart(fig)
+        st.write(matriz_multinomial)
 
     with tab2:
         st.subheader("Curvas ROC - Regressão Multinomial")
-        fig = px.line()
         for classe in curva_roc_multinomial['Classe'].unique():
             dados_classe = curva_roc_multinomial[curva_roc_multinomial['Classe'] == classe]
-            fig.add_scatter(x=dados_classe['FPR'], y=dados_classe['TPR'], mode='lines', name=f"{classe} (AUC = {auc(dados_classe['FPR'], dados_classe['TPR']):.2f})")
-        fig.add_scatter(x=[0, 1], y=[0, 1], mode='lines', line=dict(dash='dash'), name='Linha de Referência')
-        fig.update_layout(title='Curvas ROC - Regressão Multinomial', 
-                          xaxis_title='False Positive Rate', 
-                          yaxis_title='True Positive Rate')
-        st.plotly_chart(fig)
+            st.line_chart(dados_classe.set_index('FPR')['TPR'], height=400, width=700)
+            st.write(f"AUC - {classe}: {auc(dados_classe['FPR'], dados_classe['TPR']):.2f}")
+        st.write("Linha de Referência")
+        st.line_chart(pd.DataFrame({"x": [0, 1], "y": [0, 1]}), height=400, width=700)
 
     with tab3:
         st.subheader("Matriz de Confusão - XGBoost")
-        fig = px.imshow(matriz_xgboost, 
-                        x=matriz_xgboost.columns, 
-                        y=matriz_xgboost.index, 
-                        color_continuous_scale='Blues', 
-                        text_auto=True, 
-                        labels={'x': 'Predito', 'y': 'Real', 'color': 'Quantidade'})
-        fig.update_layout(title="Matriz de Confusão - XGBoost", 
-                          xaxis_title='Predito', 
-                          yaxis_title='Real')
-        st.plotly_chart(fig)
+        st.write(matriz_xgboost)
 
     with tab4:
         st.subheader("Curvas ROC - XGBoost")
-        fig = px.line()
         for classe in curva_roc_xgboost['Classe'].unique():
             dados_classe = curva_roc_xgboost[curva_roc_xgboost['Classe'] == classe]
-            fig.add_scatter(x=dados_classe['FPR'], y=dados_classe['TPR'], mode='lines', name=f"{classe} (AUC = {auc(dados_classe['FPR'], dados_classe['TPR']):.2f})")
-        fig.add_scatter(x=[0, 1], y=[0, 1], mode='lines', line=dict(dash='dash'), name='Linha de Referência')
-        fig.update_layout(title='Curvas ROC - XGBoost', 
-                          xaxis_title='False Positive Rate', 
-                          yaxis_title='True Positive Rate')
-        st.plotly_chart(fig)
+            st.line_chart(dados_classe.set_index('FPR')['TPR'], height=400, width=700)
+            st.write(f"AUC - {classe}: {auc(dados_classe['FPR'], dados_classe['TPR']):.2f}")
+        st.write("Linha de Referência")
+        st.line_chart(pd.DataFrame({"x": [0, 1], "y": [0, 1]}), height=400, width=700)
 
     with tab5:
         st.subheader("Matriz de Confusão - Rede Neural")
-        fig = px.imshow(matriz_rede_neural, 
-                        x=matriz_rede_neural.columns, 
-                        y=matriz_rede_neural.index, 
-                        color_continuous_scale='Blues', 
-                        text_auto=True, 
-                        labels={'x': 'Predito', 'y': 'Real', 'color': 'Quantidade'})
-        fig.update_layout(title="Matriz de Confusão - Rede Neural", 
-                          xaxis_title='Predito', 
-                          yaxis_title='Real')
-        st.plotly_chart(fig)
+        st.write(matriz_rede_neural)
 
     with tab6:
         st.subheader("Curvas ROC - Rede Neural")
-        fig = px.line()
         for classe in curva_roc_rede_neural['Classe'].unique():
             dados_classe = curva_roc_rede_neural[curva_roc_rede_neural['Classe'] == classe]
-            fig.add_scatter(x=dados_classe['FPR'], y=dados_classe['TPR'], mode='lines', name=f"{classe} (AUC = {auc(dados_classe['FPR'], dados_classe['TPR']):.2f})")
-        fig.add_scatter(x=[0, 1], y=[0, 1], mode='lines', line=dict(dash='dash'), name='Linha de Referência')
-        fig.update_layout(title='Curvas ROC - Rede Neural', 
-                          xaxis_title='False Positive Rate', 
-                          yaxis_title='True Positive Rate')
-        st.plotly_chart(fig)
+            st.line_chart(dados_classe.set_index('FPR')['TPR'], height=400, width=700)
+            st.write(f"AUC - {classe}: {auc(dados_classe['FPR'], dados_classe['TPR']):.2f}")
+        st.write("Linha de Referência")
+        st.line_chart(pd.DataFrame({"x": [0, 1], "y": [0, 1]}), height=400, width=700)
 
 # Exibir o aplicativo
 if __name__ == "__main__":
