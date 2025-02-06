@@ -6,7 +6,7 @@ from pathlib import Path
 def carregar_dados(caminho):
     """Carrega um dataset CSV, retorna o DataFrame ou erro."""
     try:
-        return pd.read_csv(caminho)
+        return pd.read_csv(caminho, usecols=lambda column: column not in ["Unnamed: 0"])
     except FileNotFoundError:
         st.error(f"Arquivo não encontrado: {caminho}")
         return pd.DataFrame()
@@ -91,5 +91,5 @@ def show():
         st.line_chart(pd.DataFrame({"x": [0, 1], "y": [0, 1]}), height=400, width=700)
 
 # Exibir o aplicativo
-if __name__ == "__main__":
+if __name__ == "main":
     show()
