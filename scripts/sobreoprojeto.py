@@ -38,17 +38,16 @@ def show():
     st.markdown(
         '''
         <div style="text-align: justify;">
-            <p>
-                Os dados foram obtidos das informações educacionais e socioeconômicas dos estudantes da Passos Mágicos, incluindo:
-                <ul>
-                    <li>
-                        <b><a style='text-decoration:none', href='https://drive.google.com/drive/folders/1Z1j6uzzCOgjB2a6i3Ym1pmJRsasfm7cD'> 
-                        
-                        duas bases de dados com as características de desenvolvimento educacional e questões 
-        socioeconômicas dos estudantes e um dicionário de dados com o mapeamento de todas as variáveis.
-                    
-        
-        </div>
+    <p>
+        Os dados foram obtidos das informações educacionais e socioeconômicas dos estudantes da Passos Mágicos, incluindo:
+    </p>
+    <ul>
+        <li>
+            <b><a style='text-decoration:none;color:blue' href='https://drive.google.com/drive/folders/1Z1j6uzzCOgjB2a6i3Ym1pmJRsasfm7cD'>duas bases de dados com as características de desenvolvimento educacional e questões socioeconômicas dos estudantes e um dicionário de dados com o mapeamento de todas as variáveis</a></b>.
+        </li>
+    </ul>
+</div>
+
         ''',
         unsafe_allow_html=True
     )
