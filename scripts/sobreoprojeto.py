@@ -40,11 +40,11 @@ def show():
         <div style="text-align: justify;">
     <p>
         Os dados foram obtidos das informações educacionais e socioeconômicas dos estudantes da Passos Mágicos, incluindo:
+        Duas bases de dados com as características de desenvolvimento educacional e questões socioeconômicas dos estudantes e um dicionário de dados com o mapeamento de todas as variáveis
+        
     </p>
 
-    <p>
-       Duas bases de dados com as características de desenvolvimento educacional e questões socioeconômicas dos estudantes e um dicionário de dados com o mapeamento de todas as variáveis
-    </p>
+
     
     <ul>
         <li>
