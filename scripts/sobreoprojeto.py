@@ -28,7 +28,7 @@ def show():
             <p>
                 O Datathon propõe a criação de uma proposta preditiva. Os participantes criarão um modelo preditivo para prever o comportamento dos estudantes com base em variáveis cruciais. A ideia é utilizar conhecimentos aprendidos no curso, como técnicas de machine learning, deep learning ou processamento de linguagem natural, para propor soluções de algoritmos supervisionados ou não supervisionados.
                 
-            </p>
+        
         </div>
         ''',
         unsafe_allow_html=True
