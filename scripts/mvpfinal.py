@@ -1,109 +1,85 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 import seaborn as sns
-import plotly.express as px
-import xgboost as xgb
-import tensorflow as tf
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder, StandardScaler, label_binarize
+from sklearn.preprocessing import LabelEncoder
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import confusion_matrix, classification_report, roc_curve, auc
+from sklearn.preprocessing import label_binarize
 
-# Função para carregar e processar os dados
-@st.cache_data(show_spinner=True)
-def carregar_dados():
-    caminho = "PEDE_PASSOS_DATASET_FIAP.csv"
-    df = pd.read_csv(caminho, delimiter=";")
-    
-    def preparar_dataset(df, ano):
-        colunas = ["NOME", f"PEDRA_{ano}", f"IAA_{ano}", f"IEG_{ano}", f"IPS_{ano}", f"IDA_{ano}", f"IPP_{ano}", f"IPV_{ano}", f"IAN_{ano}"]
-        df_ano = df[colunas].dropna()
-        df_ano.columns = ["NOME", "Pedra", "IAA", "IEG", "IPS", "IDA", "IPP", "IPV", "IAN"]
-        return df_ano
-    
-    df_final = pd.concat([preparar_dataset(df, ano) for ano in [2020, 2021, 2022]], ignore_index=True)
-    df_final = df_final[df_final["Pedra"] != "#NULO!"]
-    df_final.iloc[:, 2:] = df_final.iloc[:, 2:].apply(pd.to_numeric, errors='coerce')
-    df_final.dropna(inplace=True)
-    
-    label_encoder = LabelEncoder()
-    df_final["Pedra"] = label_encoder.fit_transform(df_final["Pedra"])
-    
-    return df_final, label_encoder
+# Carregando Dataset
+file_path = "PEDE_PASSOS_DATASET_FIAP.csv"  # Ajuste para o caminho correto
+df = pd.read_csv(file_path, delimiter=";")
 
-df_final, label_encoder = carregar_dados()
+# Criando datasets para cada ano e renomeando colunas
+def preparar_dataset(df, ano):
+    colunas = ["NOME", f"PEDRA_{ano}", f"IAA_{ano}", f"IEG_{ano}", f"IPS_{ano}", f"IDA_{ano}", f"IPP_{ano}", f"IPV_{ano}", f"IAN_{ano}"]
+    df_ano = df[colunas].dropna()
+    df_ano.columns = ["NOME", "Pedra", "IAA", "IEG", "IPS", "IDA", "IPP", "IPV", "IAN"]
+    return df_ano
+
+df_2020 = preparar_dataset(df, 2020)
+df_2021 = preparar_dataset(df, 2021)
+df_2022 = preparar_dataset(df, 2022)
+
+df_final = pd.concat([df_2020, df_2021, df_2022], ignore_index=True)
+df_final = df_final[df_final["Pedra"] != "#NULO!"]
+num_cols = ["IAA", "IEG", "IPS", "IDA", "IPP", "IPV", "IAN"]
+df_final[num_cols] = df_final[num_cols].apply(pd.to_numeric, errors='coerce')
+df_final = df_final.dropna()
+
+# Pré-processamento: Transformação das variáveis categóricas
+label_encoder = LabelEncoder()
+df_final["Pedra"] = label_encoder.fit_transform(df_final["Pedra"])
+
+# Separação de dados para treino e teste
 X = df_final.drop(columns=["NOME", "Pedra"])
 y = df_final["Pedra"]
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=123)
 
-# Criar abas no Streamlit
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
-    'Matriz - Multinomial', 'Curva ROC - Multinomial', 
-    'Matriz - XGBoost', 'Curva ROC - XGBoost', 
-    'Matriz - Rede Neural', 'Curva ROC - Rede Neural'
-])
-
-# 🔹 Regressão Multinomial
+# Modelo de Regressão Multinomial
 modelo_multinomial = LogisticRegression(multi_class="multinomial", solver="lbfgs", max_iter=1000)
-modelo_multinomial.fit(X_train, y_train)
-y_pred_mult = modelo_multinomial.predict(X_test)
+modelo_multinomial.fit(X, y)
 
-# 🔹 XGBoost
-xgb_model = xgb.XGBClassifier(objective="multi:softmax", num_class=len(label_encoder.classes_), eval_metric="mlogloss")
-xgb_model.fit(X_train, y_train)
-y_pred_xgb = xgb_model.predict(X_test)
+# Previsões e Avaliação do Modelo
+y_pred = modelo_multinomial.predict(X)
+cm = confusion_matrix(y, y_pred)
 
-# 🔹 Rede Neural
-scaler = StandardScaler()
-X_train_scaled = scaler.fit_transform(X_train)
-X_test_scaled = scaler.transform(X_test)
+# Função para exibir a Matriz de Confusão
+def plot_confusion_matrix(cm, classes, title='Matriz de Confusão', cmap=plt.cm.Blues):
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(cm, annot=True, fmt="d", cmap=cmap, xticklabels=classes, yticklabels=classes)
+    plt.title(title)
+    plt.xlabel("Previsões")
+    plt.ylabel("Valores Reais")
+    st.pyplot(plt)
 
-model = Sequential([
-    Dense(8, activation="relu", input_shape=(X_train.shape[1],)),
-    Dense(4, activation="relu"),
-    Dense(len(label_encoder.classes_), activation="softmax")
-])
-model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"])
-model.fit(X_train_scaled, y_train, epochs=50, batch_size=8, verbose=0)
-y_pred_nn = np.argmax(model.predict(X_test_scaled), axis=1)
+# Função para exibir a Curva ROC
+def plot_roc_curve(model, X, y, classes):
+    y_bin = label_binarize(y, classes=np.unique(y))
+    y_pred_proba = model.predict_proba(X)
+    n_classes = y_bin.shape[1]
+    plt.figure(figsize=(10, 8))
+    for i in range(n_classes):
+        fpr, tpr, _ = roc_curve(y_bin[:, i], y_pred_proba[:, i])
+        roc_auc = auc(fpr, tpr)
+        plt.plot(fpr, tpr, label=f"{classes[i]} (AUC = {roc_auc:.2f})")
+    plt.plot([0, 1], [0, 1], "k--")
+    plt.xlabel("Taxa de Falsos Positivos")
+    plt.ylabel("Taxa de Verdadeiros Positivos")
+    plt.title("Curvas ROC - Regressão Multinomial")
+    plt.legend()
+    st.pyplot(plt)
 
-# 🔹 Função para exibir matriz de confusão
-def plot_matriz(y_true, y_pred, titulo):
-    cm = confusion_matrix(y_true, y_pred)
-    fig = px.imshow(cm, text_auto=True, color_continuous_scale="Blues",
-                    labels=dict(x="Previsões", y="Valores Reais"))
-    fig.update_layout(title=titulo)
-    return fig
+# Interface Streamlit
+st.title("Análise de Dados - ONG Passos Mágicos")
+st.header("Modelo de Regressão Multinomial")
 
-# 🔹 Função para exibir Curva ROC
-def plot_roc(y_true, y_scores, titulo):
-    y_bin = label_binarize(y_true, classes=np.arange(len(label_encoder.classes_)))
-    fig = px.line(title=titulo)
-    for i in range(len(label_encoder.classes_)):
-        fpr, tpr, _ = roc_curve(y_bin[:, i], y_scores[:, i])
-        fig.add_scatter(x=fpr, y=tpr, mode='lines', name=f"Classe {label_encoder.classes_[i]}")
-    return fig
+# Exibindo a Matriz de Confusão
+st.subheader("Matriz de Confusão")
+plot_confusion_matrix(cm, classes=label_encoder.classes_)
 
-# 🔹 Exibição dos gráficos
-with tab1:
-    st.subheader("Matriz de Confusão - Multinomial")
-    st.plotly_chart(plot_matriz(y_test, y_pred_mult, "Matriz de Confusão - Multinomial"))
-with tab3:
-    st.subheader("Matriz de Confusão - XGBoost")
-    st.plotly_chart(plot_matriz(y_test, y_pred_xgb, "Matriz de Confusão - XGBoost"))
-with tab5:
-    st.subheader("Matriz de Confusão - Rede Neural")
-    st.plotly_chart(plot_matriz(y_test, y_pred_nn, "Matriz de Confusão - Rede Neural"))
-
-# 🔹 Curvas ROC
-with tab2:
-    st.subheader("Curva ROC - Multinomial")
-    st.plotly_chart(plot_roc(y_test, modelo_multinomial.predict_proba(X_test), "Curva ROC - Multinomial"))
-with tab4:
-    st.subheader("Curva ROC - XGBoost")
-    st.plotly_chart(plot_roc(y_test, xgb_model.predict_proba(X_test), "Curva ROC - XGBoost"))
-with tab6:
-    st.subheader("Curva ROC - Rede Neural")
-    st.plotly_chart(plot_roc(y_test, model.predict(X_test_scaled), "Curva ROC - Rede Neural"))
+# Exibindo a Curva ROC
+st.subheader("Curva ROC - Regressão Multinomial")
+plot_roc_curve(modelo_multinomial, X, y, label_encoder.classes_)
