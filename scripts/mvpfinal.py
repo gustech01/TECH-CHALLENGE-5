@@ -50,7 +50,7 @@ def show():
     st.title('Modelos Preditivos')
 
     # Layout do aplicativo
-    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(['Matriz Multinomial', 'Curva ROC Multinomial', 'Matriz XGBoost', 'Curvas ROC XGBoost', 'Matriz Rede Neural', 'Curva Rede Neural'])
+    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(['Matriz Multinomial', 'Curva ROC Multinomial', 'Matriz XGBoost', 'Curvas ROC XGBoost', 'Matriz Rede Neural', 'Curva ROC Rede Neural'])
 
     # Carregando as matrizes de confusão e curvas ROC
     matriz_multinomial = carregar_dados("datasets/matriz_confusao_multinomial.csv")
