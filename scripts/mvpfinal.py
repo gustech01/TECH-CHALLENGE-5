@@ -2,11 +2,6 @@ import streamlit as st
 import pandas as pd
 from pathlib import Path
 
-# Adicione esta linha no início do seu script para garantir que a biblioteca necessária seja instalada
-!pip install scikit-learn
-
-from sklearn.metrics import auc
-
 @st.cache_data(show_spinner=True)
 def carregar_dados(caminho):
     """Carrega um dataset CSV, retorna o DataFrame ou erro."""
@@ -65,9 +60,8 @@ def show():
         for classe in curva_roc_multinomial['Classe'].unique():
             dados_classe = curva_roc_multinomial[curva_roc_multinomial['Classe'] == classe]
             st.line_chart(dados_classe.set_index('FPR')['TPR'], height=400, width=700)
-            st.write(f"AUC - {classe}: {auc(dados_classe['FPR'], dados_classe['TPR']):.2f}")
         st.write("Linha de Referência")
-        st.line_chart(pd.DataFrame({"x": [0, 1], "y": [0, 1]}), height=400, width=700)
+        st.line_chart(pd.DataFrame({"FPR": [0, 1], "TPR": [0, 1]}).set_index('FPR'), height=400, width=700)
 
     with tab3:
         st.subheader("Matriz de Confusão - XGBoost")
@@ -78,4 +72,21 @@ def show():
         for classe in curva_roc_xgboost['Classe'].unique():
             dados_classe = curva_roc_xgboost[curva_roc_xgboost['Classe'] == classe]
             st.line_chart(dados_classe.set_index('FPR')['TPR'], height=400, width=700)
-            st.write
+        st.write("Linha de Referência")
+        st.line_chart(pd.DataFrame({"FPR": [0, 1], "TPR": [0, 1]}).set_index('FPR'), height=400, width=700)
+
+    with tab5:
+        st.subheader("Matriz de Confusão - Rede Neural")
+        st.write(matriz_rede_neural)
+
+    with tab6:
+        st.subheader("Curvas ROC - Rede Neural")
+        for classe in curva_roc_rede_neural['Classe'].unique():
+            dados_classe = curva_roc_rede_neural[curva_roc_rede_neural['Classe'] == classe]
+            st.line_chart(dados_classe.set_index('FPR')['TPR'], height=400, width=700)
+        st.write("Linha de Referência")
+        st.line_chart(pd.DataFrame({"FPR": [0, 1], "TPR": [0, 1]}).set_index('FPR'), height=400, width=700)
+
+# Exibir o aplicativo
+if __name__ == "__main__":
+    show()
