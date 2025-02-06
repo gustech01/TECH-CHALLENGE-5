@@ -1,103 +1,169 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import confusion_matrix, classification_report, roc_curve, auc
-from sklearn.preprocessing import label_binarize
+from pathlib import Path
 
-# Verificando a instalação das bibliotecas
-try:
-    import seaborn as sns
-except ModuleNotFoundError:
-    st.error("Seaborn não está instalado. Por favor, instale a biblioteca executando 'pip install seaborn'.")
-
-# Função para carregar o dataset
+@st.cache_data(show_spinner=True)
 def carregar_dados(caminho):
+    """Carrega um dataset CSV, retorna o DataFrame ou erro."""
     try:
-        df = pd.read_csv(caminho, delimiter=";")
-        return df
+        return pd.read_csv(caminho)
     except FileNotFoundError:
         st.error(f"Arquivo não encontrado: {caminho}")
+        return pd.DataFrame()
+
+@st.cache_resource(show_spinner=True)
+def carregar_imagem(caminho):
+    """Carrega o caminho da imagem."""
+    imagem_path = Path(caminho)
+    if imagem_path.is_file():
+        return str(imagem_path)
+    else:
+        st.error(f"Imagem não encontrada: {caminho}")
         return None
 
-# Carregando Dataset
-file_path = "PEDE_PASSOS_DATASET_FIAP.csv"  # Ajuste para o caminho correto
-df = carregar_dados(file_path)
+def show():
+    # Logo FIAP
+    left, cent, right = st.columns(3)
+    with right:
+        imagem = carregar_imagem('imagens/fiap.png')
+        if imagem:
+            st.image(imagem)
 
-if df is not None:
-    # Criando datasets para cada ano e renomeando colunas
-    def preparar_dataset(df, ano):
-        colunas = ["NOME", f"PEDRA_{ano}", f"IAA_{ano}", f"IEG_{ano}", f"IPS_{ano}", f"IDA_{ano}", f"IPP_{ano}", f"IPV_{ano}", f"IAN_{ano}"]
-        df_ano = df[colunas].dropna()
-        df_ano.columns = ["NOME", "Pedra", "IAA", "IEG", "IPS", "IDA", "IPP", "IPV", "IAN"]
-        return df_ano
+    # Título
+    st.title('MVP Petróleo Brent')
 
-    df_2020 = preparar_dataset(df, 2020)
-    df_2021 = preparar_dataset(df, 2021)
-    df_2022 = preparar_dataset(df, 2022)
+    # Layout do aplicativo
+    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(['Real x Forecast', 'Dados Brutos', 'Matriz de Confusão', 'Curvas ROC', 'Tab 5', 'Tab 6'])
 
-    df_final = pd.concat([df_2020, df_2021, df_2022], ignore_index=True)
-    df_final = df_final[df_final["Pedra"] != "#NULO!"]
-    num_cols = ["IAA", "IEG", "IPS", "IDA", "IPP", "IPV", "IAN"]
-    df_final[num_cols] = df_final[num_cols].apply(pd.to_numeric, errors='coerce')
-    df_final = df_final.dropna()
+    # Leitura dos dados
+    dados = carregar_dados("dataset/Europe_Brent_Spot_Price_FOB.csv")
+    forecast = carregar_dados("dataset/xgboost_results.csv")
 
-    # Pré-processamento: Transformação das variáveis categóricas
-    label_encoder = LabelEncoder()
-    df_final["Pedra"] = label_encoder.fit_transform(df_final["Pedra"])
+    if dados.empty or forecast.empty:
+        st.error("Os arquivos de dataset não foram carregados corretamente.")
+        return
 
-    # Separação de dados para treino e teste
-    X = df_final.drop(columns=["NOME", "Pedra"])
-    y = df_final["Pedra"]
+    # Tratando dados históricos
+    if 'Date' in dados.columns and 'Value' in dados.columns:
+        dados['Date'] = pd.to_datetime(dados['Date'], errors='coerce')
+        dados = dados[dados['Date'].between('2000-01-01', '2025-12-31')]
+        dados.rename(columns={'Value': 'Real'}, inplace=True)
+    else:
+        st.error("Colunas 'Date' ou 'Value' ausentes no dataset histórico.")
+        return
 
-    # Modelo de Regressão Multinomial
-    modelo_multinomial = LogisticRegression(multi_class="multinomial", solver="lbfgs", max_iter=1000)
-    modelo_multinomial.fit(X, y)
+    # Tratando dados de previsões
+    if 'Date' in forecast.columns and 'Predicted' in forecast.columns:
+        forecast['Date'] = pd.to_datetime(forecast['Date'], errors='coerce')
+        # Renomear a coluna 'Predicted' para 'Predito'
+        forecast.rename(columns={'Predicted': 'Predito'}, inplace=True)
+    else:
+        st.error("Colunas 'Date' ou 'Predicted' ausentes no dataset de previsões.")
+        return
 
-    # Previsões e Avaliação do Modelo
-    y_pred = modelo_multinomial.predict(X)
-    cm = confusion_matrix(y, y_pred)
+    # Combinando dados históricos e forecast em um único DataFrame
+    dados_comb = pd.merge(dados, forecast[['Date', 'Predito']], on='Date', how='outer')
+    dados_comb = dados_comb.set_index('Date').sort_index()
 
-    # Função para exibir a Matriz de Confusão
-    def plot_confusion_matrix(cm, classes, title='Matriz de Confusão', cmap=plt.cm.Blues):
-        plt.figure(figsize=(8, 6))
-        sns.heatmap(cm, annot=True, fmt="d", cmap=cmap, xticklabels=classes, yticklabels=classes)
-        plt.title(title)
-        plt.xlabel("Previsões")
-        plt.ylabel("Valores Reais")
-        st.pyplot(plt)
+    # Substituir valores NaN por interpolação para evitar problemas no gráfico
+    dados_comb = dados_comb.interpolate(method='linear')
 
-    # Função para exibir a Curva ROC
-    def plot_roc_curve(model, X, y, classes):
-        y_bin = label_binarize(y, classes=np.unique(y))
-        y_pred_proba = model.predict_proba(X)
-        n_classes = y_bin.shape[1]
-        plt.figure(figsize=(10, 8))
-        for i in range(n_classes):
-            fpr, tpr, _ = roc_curve(y_bin[:, i], y_pred_proba[:, i])
-            roc_auc = auc(fpr, tpr)
-            plt.plot(fpr, tpr, label=f"{classes[i]} (AUC = {roc_auc:.2f})")
-        plt.plot([0, 1], [0, 1], "k--")
-        plt.xlabel("Taxa de Falsos Positivos")
-        plt.ylabel("Taxa de Verdadeiros Positivos")
-        plt.title("Curvas ROC - Regressão Multinomial")
-        plt.legend()
-        st.pyplot(plt)
+    with tab1:
+        # Filtro de datas dinâmico
+        if not dados_comb.empty:
+            st.subheader("Real x Predito")
 
-    # Interface Streamlit
-    st.title("Análise de Dados - ONG Passos Mágicos")
-    st.header("Modelo de Regressão Multinomial")
+            # Obter o intervalo de datas disponível
+            min_date = dados_comb.index.min().date()
+            max_date = dados_comb.index.max().date()
 
-    # Exibindo a Matriz de Confusão
-    st.subheader("Matriz de Confusão")
-    plot_confusion_matrix(cm, classes=label_encoder.classes_)
+            # Slider para selecionar o intervalo de datas
+            date_range = st.slider(
+                "Selecione o período:",
+                min_value=min_date,
+                max_value=max_date,
+                value=(min_date, max_date)
+            )
 
-    # Exibindo a Curva ROC
-    st.subheader("Curva ROC - Regressão Multinomial")
-    plot_roc_curve(modelo_multinomial, X, y, label_encoder.classes_)
-else:
-    st.error("Não foi possível carregar o dataset. Verifique o caminho do arquivo.")
+            # Filtrar os dados com base no intervalo selecionado
+            dados_filtrados = dados_comb.loc[date_range[0]:date_range[1]]
+
+            st.line_chart(dados_filtrados[['Real', 'Predito']], use_container_width=True)
+
+            st.markdown(
+            """
+            <h4>MAPE: <span style='color:green;'>1,48%</span></h4>
+            """,
+            unsafe_allow_html=True
+            )       
+
+            # Texto explicativo
+            st.markdown("""
+            ### Eventos Históricos:
+            - **2008**: Crise financeira global provocada pelo colapso do mercado imobiliário dos EUA, afetando fortemente o consumo e os preços do petróleo.
+            - **2014**: Queda dos preços devido à superprodução nos EUA e desaceleração da demanda na Europa e Ásia.
+            - **2020**: Redução drástica no consumo devido à pandemia de COVID-19, gerando desequilíbrios significativos entre oferta e demanda.
+            - **2022**: Invasão da Ucrânia pela Rússia, que resultou em sanções econômicas severas à Rússia e causou um aumento abrupto no preço do petróleo Brent, ultrapassando US$ 120 o barril em março.
+            """)
+
+            # Texto explicativo
+            st.write("""
+            ### Informações do Modelo Xboost:
+            O modelo utilizou 1000 iterações com um early stop de 50 (para evitar overfitting, caso o valor de erro das iterações subsequentes parasse de cair). O modelo XGBoost apresentou um resultado bem satisfatório, capturando bem a alteração de tendências e sazonalidade dos dados, gerando um MAPE de <span style='color:green;'>1,48%</span>.  
+            O **MAPE** (Mean Absolute Percentage Error, ou Erro Percentual Absoluto Médio) é uma métrica amplamente utilizada para avaliar a precisão de modelos preditivos. Ele mede a porcentagem média de erro entre os valores reais e os valores previstos, fornecendo uma indicação clara do desempenho do modelo em termos percentuais.  
+            ### Fórmula do MAPE:
+            """,
+            unsafe_allow_html=True
+            )
+
+            # Fórmula centralizada
+            left, cent, right = st.columns(3)
+            with cent:
+                imagem_2 = carregar_imagem('imagens/formula_black_background.png')
+                if imagem_2:
+                    st.image(imagem_2)
+
+            # Continuação do texto explicativo
+            st.write("""
+            ### Componentes da Fórmula:
+            - **n**: Total de observações.
+            - **yᵢ**: Valor real da i-ésima observação.
+            - **ŷᵢ**: Valor previsto para a i-ésima observação.
+            - O resultado final é multiplicado por 100 para ser expresso em percentual.
+            ### Importância do MAPE:
+            O MAPE é fácil de interpretar e fornece uma métrica clara e intuitiva. No entanto, é importante lembrar que o MAPE pode ser sensível a valores reais muito próximos de zero, o que pode distorcer os resultados.
+            No contexto de modelos como o XGBoost, ele é frequentemente usado como métrica de avaliação para otimizar o desempenho preditivo.
+            """)
+
+        else:
+            st.error("Os dados combinados estão vazios após o processamento.")
+
+    with tab2:
+        # Exibindo os dados brutos
+        st.subheader("Dados Brutos")
+        st.dataframe(dados)
+
+        st.subheader("Dados de Previsões")
+        st.dataframe(forecast)
+
+    with tab3:
+        st.subheader("Matriz de Confusão - Modelos")
+        # Adicione a visualização das matrizes de confusão para os modelos aqui
+        # Por exemplo, usando seaborn heatmap ou outra biblioteca de visualização
+
+    with tab4:
+        st.subheader("Curvas ROC - Modelos")
+        # Adicione a visualização das curvas ROC para os modelos aqui
+        # Por exemplo, usando matplotlib ou outra biblioteca de visualização
+
+    with tab5:
+        st.subheader("Tab 5")
+        # Adicione o conteúdo específico para a Tab 5 aqui
+
+    with tab6:
+        st.subheader("Tab 6")
+        # Adicione o conteúdo específico para a Tab 6 aqui
+
+# Exibir o aplicativo
+if __name__ == "__main__":
+    show()
