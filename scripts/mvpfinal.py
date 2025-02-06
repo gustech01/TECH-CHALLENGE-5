@@ -1,51 +1,25 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.metrics import confusion_matrix, roc_curve, auc
+from sklearn.preprocessing import label_binarize
 from pathlib import Path
 
 # Função para carregar dados
 @st.cache_data(show_spinner=True)
 def carregar_dados(caminho):
-    """Carrega um dataset CSV, retorna o DataFrame ou erro."""
     try:
         return pd.read_csv(caminho)
     except FileNotFoundError:
         st.error(f"Arquivo não encontrado: {caminho}")
         return pd.DataFrame()
 
-# Função para carregar imagens
-@st.cache_resource(show_spinner=True)
-def carregar_imagem(caminho):
-    """Carrega o caminho da imagem."""
-    imagem_path = Path(caminho)
-    if imagem_path.is_file():
-        return str(imagem_path)
-    else:
-        st.error(f"Imagem não encontrada: {caminho}")
-        return None
-
-# Função para exibir a matriz de confusão como gráfico
-def plot_matriz_confusao(df, titulo):
-    fig, ax = plt.subplots(figsize=(6, 4))
-    sns.heatmap(df, annot=True, fmt="d", cmap="Blues", ax=ax)
-    ax.set_title(titulo)
-    ax.set_xlabel("Previsões")
-    ax.set_ylabel("Valores Reais")
-    st.pyplot(fig)
-
 # Interface principal
 def show():
-    # Adiciona imagem no topo (Logo FIAP)
-    left, cent, right = st.columns(3)
-    with right:
-        imagem = carregar_imagem('imagens/fiap.png')
-        if imagem:
-            st.image(imagem)
-
-    # Título
-    st.title('Matrizes e Modelos')
-
+    st.title('Matrizes de Confusão e Curvas ROC')
+    
     # Criando abas (tabs)
     tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
         'Matriz - Multinomial', 
@@ -56,45 +30,71 @@ def show():
         'Curva ROC - Rede Neural'
     ])
 
-    # 🔹 Criando tabelas e gráficos dentro das abas
+    # 🔹 Matrizes de Confusão
     with tab1:
         st.subheader("Matriz de Confusão - Multinomial")
         df_multinomial = carregar_dados('dados/matriz_multinomial.csv')
         if not df_multinomial.empty:
-            st.dataframe(df_multinomial, height=200, width=400)
-            plot_matriz_confusao(df_multinomial, "Matriz de Confusão - Multinomial")
-
-    with tab2:
-        st.subheader("Curva ROC - Multinomial")
-        imagem_roc_multinomial = carregar_imagem('imagens/roc_multinomial.png')
-        if imagem_roc_multinomial:
-            st.image(imagem_roc_multinomial)
-
+            fig, ax = plt.subplots()
+            sns.heatmap(df_multinomial, annot=True, fmt="d", cmap="Blues", ax=ax)
+            ax.set_xlabel("Previsões")
+            ax.set_ylabel("Valores Reais")
+            st.pyplot(fig)
+    
     with tab3:
         st.subheader("Matriz de Confusão - XGBoost")
         df_xgb = carregar_dados('dados/matriz_xgb.csv')
         if not df_xgb.empty:
-            st.dataframe(df_xgb, height=200, width=400)
-            plot_matriz_confusao(df_xgb, "Matriz de Confusão - XGBoost")
-
-    with tab4:
-        st.subheader("Curva ROC - XGBoost")
-        imagem_roc_xgb = carregar_imagem('imagens/roc_xgb.png')
-        if imagem_roc_xgb:
-            st.image(imagem_roc_xgb)
-
+            fig, ax = plt.subplots()
+            sns.heatmap(df_xgb, annot=True, fmt="d", cmap="Blues", ax=ax)
+            ax.set_xlabel("Previsões")
+            ax.set_ylabel("Valores Reais")
+            st.pyplot(fig)
+    
     with tab5:
         st.subheader("Matriz de Confusão - Rede Neural")
         df_nn = carregar_dados('dados/matriz_nn.csv')
         if not df_nn.empty:
-            st.dataframe(df_nn, height=200, width=400)
-            plot_matriz_confusao(df_nn, "Matriz de Confusão - Rede Neural")
-
+            fig, ax = plt.subplots()
+            sns.heatmap(df_nn, annot=True, fmt="d", cmap="Blues", ax=ax)
+            ax.set_xlabel("Previsões")
+            ax.set_ylabel("Valores Reais")
+            st.pyplot(fig)
+    
+    # 🔹 Curvas ROC
+    def plot_roc_curve(df, modelo):
+        if df.empty:
+            st.error(f"Dados da Curva ROC ({modelo}) não encontrados!")
+            return
+        
+        fig, ax = plt.subplots()
+        for i in range(len(df.columns) // 2):  # Considerando que cada classe tem duas colunas: FPR e TPR
+            fpr = df.iloc[:, i * 2]
+            tpr = df.iloc[:, i * 2 + 1]
+            roc_auc = auc(fpr, tpr)
+            ax.plot(fpr, tpr, label=f"Classe {i} (AUC = {roc_auc:.2f})")
+        
+        ax.plot([0, 1], [0, 1], "k--")
+        ax.set_xlabel("False Positive Rate")
+        ax.set_ylabel("True Positive Rate")
+        ax.set_title(f"Curva ROC - {modelo}")
+        ax.legend()
+        st.pyplot(fig)
+    
+    with tab2:
+        st.subheader("Curva ROC - Multinomial")
+        df_roc_multinomial = carregar_dados('dados/roc_multinomial.csv')
+        plot_roc_curve(df_roc_multinomial, "Multinomial")
+    
+    with tab4:
+        st.subheader("Curva ROC - XGBoost")
+        df_roc_xgb = carregar_dados('dados/roc_xgb.csv')
+        plot_roc_curve(df_roc_xgb, "XGBoost")
+    
     with tab6:
         st.subheader("Curva ROC - Rede Neural")
-        imagem_roc_nn = carregar_imagem('imagens/roc_nn.png')
-        if imagem_roc_nn:
-            st.image(imagem_roc_nn)
+        df_roc_nn = carregar_dados('dados/roc_nn.csv')
+        plot_roc_curve(df_roc_nn, "Rede Neural")
 
 # Executar a interface no Streamlit
 if __name__ == "__main__":
