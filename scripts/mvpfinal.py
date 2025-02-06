@@ -30,7 +30,7 @@ def show():
             st.image(imagem)
 
     # Título
-    st.title('MVP Petróleo Brent')
+    st.title('Matrizes e Modelos')
 
     # Layout do aplicativo
     tab1, tab2 = st.tabs(['Real x Forecast', 'Dados Brutos'])
