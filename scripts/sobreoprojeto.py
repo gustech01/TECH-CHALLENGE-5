@@ -39,18 +39,13 @@ def show():
         '''
         <div style="text-align: justify;">
             <p>
-                Os dados foram obtidos do site do IPEA (Instituto de Pesquisa Econômica Aplicada), incluindo:
+                Os dados foram obtidos das informações educacionais e socioeconômicas dos estudantes da Passos Mágicos, incluindo:
                 <ul>
                     <li>
-                        <b><a style='text-decoration:none', href='http://www.ipeadata.gov.br/ExibeSerie.aspx?module=m&serid=1650971490&oper=view'>Tabela de preços do petróleo Brent</a></b> 
-                        (preços por barril em dias úteis, sem incluir frete e seguro).
-                    </li>
-                    <li>
-                        <b><a style='text-decoration:none', href='http://www.ipeadata.gov.br/ExibeSerie.aspx?serid=38590&module=M'>Tabela de preços do dólar</a></b> 
-                        para o mesmo período.
-                    </li>
-                </ul>
-            </p>
+                        <b><a style='text-decoration:none', href='https://drive.google.com/drive/folders/1Z1j6uzzCOgjB2a6i3Ym1pmJRsasfm7cD'>duas bases de dados com as características de desenvolvimento educacional e questões 
+        socioeconômicas dos estudantes e um dicionário de dados com o mapeamento de todas as variáveis.
+                    
+        
         </div>
         ''',
         unsafe_allow_html=True
