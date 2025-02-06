@@ -33,7 +33,7 @@ def show():
     st.title('Matrizes e Modelos')
 
     # Layout do aplicativo
-    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(['Matriz - Multinomial', 'Curva ROC - Multinomial', 'Matriz - XGbBoost', 'Curva ROC - XGBoost', 'Matriz - Rede Neural', 'Curva ROC - Rede Neural])
+    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(['Matriz - Multinomial', 'Curva ROC - Multinomial', 'Matriz - XGbBoost', 'Curva ROC - XGBoost', 'Matriz - Rede Neural', 'Curva ROC - Rede Neural]')
 
     # Leitura dos dados
     dados = carregar_dados("dataset/Europe_Brent_Spot_Price_FOB.csv")
