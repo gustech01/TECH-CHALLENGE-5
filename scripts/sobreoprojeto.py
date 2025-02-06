@@ -26,23 +26,22 @@ def show():
         '''
         <div style="text-align: justify;">
             <p>
-                O Datathon é um evento voltado para cientistas e analistas de dados que têm como missão criar soluções que demonstrem o impacto da ONG "Passos Mágicos" na comunidade que atende. Esta ONG utiliza a educação como ferramenta para melhorar a vida de crianças e jovens em situação de vulnerabilidade social.
+                O Datathon é uma competição voltada para cientistas e analistas de dados, cujo objetivo é criar soluções inovadoras utilizando dados educacionais e socioeconômicos dos estudantes atendidos pela ONG "Passos Mágicos". Esta ONG tem como missão transformar a vida de crianças e jovens em situação de vulnerabilidade social através da educação.
             </p>
             <p>
-                <b>Objetivo do Datathon:</b> O objetivo principal é utilizar dados educacionais e socioeconômicos dos anos de 2020, 2021 e 2022 para criar análises e modelos preditivos. Existem duas principais propostas que os participantes podem escolher:
+                <b>Foco no Modelo Preditivo:</b> Para esta edição do Datathon, o destaque vai para a criação de um modelo preditivo capaz de prever o comportamento dos estudantes com base em variáveis cruciais. Esse modelo será fundamental para ajudar a ONG a identificar padrões e tomar decisões informadas que impactem positivamente o desenvolvimento dos alunos.
                 <ul>
-                    <li><b>Proposta Analítica:</b> Criar um dashboard e contar uma história com os dados, mostrando como a ONG impactou o desempenho dos estudantes. Isso ajuda a ONG a tomar decisões baseadas em indicadores de performance e entender melhor o perfil dos estudantes.</li>
-                    <li><b>Proposta Preditiva:</b> Desenvolver um modelo preditivo que prevê o comportamento dos estudantes com base em variáveis importantes. Aqui, a criatividade é bem-vinda, e os participantes podem usar técnicas de aprendizado de máquina, aprendizado profundo ou processamento de linguagem natural para criar suas soluções.</li>
+                    <li><b>Proposta Preditiva:</b> Utilizando técnicas avançadas de aprendizado de máquina (machine learning), aprendizado profundo (deep learning) ou processamento de linguagem natural, os participantes devem desenvolver um algoritmo que faça previsões precisas. A criatividade é encorajada para encontrar as melhores soluções preditivas.</li>
                 </ul>
             </p>
             <p>
-                <b>Base de Dados:</b> Os dados utilizados no Datathon incluem informações educacionais e socioeconômicas dos estudantes atendidos pela ONG "Passos Mágicos". Além das bases de dados, também estão disponíveis relatórios de pesquisa para ajudar os participantes a entenderem melhor o contexto e o impacto da ONG.
+                <b>Base de Dados:</b> Os dados fornecidos incluem informações detalhadas sobre o desempenho educacional e as condições socioeconômicas dos estudantes de 2020 a 2022. Além disso, relatórios de pesquisa da Passos Mágicos estão disponíveis para ajudar no entendimento do contexto e na identificação de variáveis importantes para o modelo preditivo.
             </p>
             <p>
-                <b>Entrega do Projeto:</b> Os participantes podem optar por entregar uma ou ambas as propostas. Para a proposta analítica, a entrega deve incluir um dashboard e um relatório de análise. Para a proposta preditiva, a entrega deve incluir um modelo preditivo implementado no Streamlit.
+                <b>Entrega do Projeto:</b> Os participantes devem entregar o modelo preditivo com deploy realizado no Streamlit. A entrega deve incluir todos os arquivos utilizados e o código-fonte, que podem ser compartilhados por meio de um repositório no GitHub, juntamente com o link para o modelo preditivo.
             </p>
             <p>
-                Os projetos podem ser compartilhados por meio de um repositório no GitHub, incluindo todos os arquivos utilizados e links para o dashboard ou modelo preditivo.
+                Ao focar na proposta preditiva, você estará contribuindo diretamente para o desenvolvimento de soluções que podem transformar a vida dos estudantes atendidos pela ONG "Passos Mágicos".
             </p>
         </div>
         ''',
