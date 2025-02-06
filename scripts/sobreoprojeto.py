@@ -20,43 +20,29 @@ def show():
             st.image(imagem)
 
     # Título do projeto
-    st.title('Sobre o Projeto')
+    st.title('Sobre o Projeto Datathon')
   
     st.markdown(
         '''
         <div style="text-align: justify;">
             <p>
-                Este projeto utiliza a metodologia CRISP-DM (CRoss Industry Standard Process for Data Mining), amplamente aplicada em projetos de dados. A metodologia segue 6 etapas principais:
+                O Datathon é um evento voltado para cientistas e analistas de dados que têm como missão criar soluções que demonstrem o impacto da ONG "Passos Mágicos" na comunidade que atende. Esta ONG utiliza a educação como ferramenta para melhorar a vida de crianças e jovens em situação de vulnerabilidade social.
+            </p>
+            <p>
+                <b>Objetivo do Datathon:</b> O objetivo principal é utilizar dados educacionais e socioeconômicos dos anos de 2020, 2021 e 2022 para criar análises e modelos preditivos. Existem duas principais propostas que os participantes podem escolher:
                 <ul>
-                    <li><b>Análise do negócio (business understanding):</b> Entendimento do produto/serviço, público-alvo e estratégias do setor;</li>
-                    <li><b>Análise dos dados (data understanding):</b> Seleção e avaliação dos dados úteis para a solução do problema;</li>
-                    <li><b>Preparação dos dados (data preparation):</b> Pré-processamento dos dados para atender aos requisitos das soluções propostas;</li>
-                    <li><b>Modelagem (modeling):</b> Extração de insights úteis ao negócio por meio de modelagem dos dados;</li>
-                    <li><b>Avaliação (evaluation):</b> Verificação do desempenho do modelo aplicado;</li>
-                    <li><b>Implementação (deployment):</b> Disponibilização dos resultados às partes interessadas, como dashboards ou relatórios.</li>
+                    <li><b>Proposta Analítica:</b> Criar um dashboard e contar uma história com os dados, mostrando como a ONG impactou o desempenho dos estudantes. Isso ajuda a ONG a tomar decisões baseadas em indicadores de performance e entender melhor o perfil dos estudantes.</li>
+                    <li><b>Proposta Preditiva:</b> Desenvolver um modelo preditivo que prevê o comportamento dos estudantes com base em variáveis importantes. Aqui, a criatividade é bem-vinda, e os participantes podem usar técnicas de aprendizado de máquina, aprendizado profundo ou processamento de linguagem natural para criar suas soluções.</li>
                 </ul>
             </p>
-        </div>
-        ''',
-        unsafe_allow_html=True
-    )
-
-    # Informações sobre os dados e implementação
-    st.markdown(
-        '''
-        <div style="text-align: justify;">
             <p>
-                Os dados foram obtidos do site do IPEA (Instituto de Pesquisa Econômica Aplicada), incluindo:
-                <ul>
-                    <li>
-                        <b><a style='text-decoration:none', href='http://www.ipeadata.gov.br/ExibeSerie.aspx?module=m&serid=1650971490&oper=view'>Tabela de preços do petróleo Brent</a></b> 
-                        (preços por barril em dias úteis, sem incluir frete e seguro).
-                    </li>
-                    <li>
-                        <b><a style='text-decoration:none', href='http://www.ipeadata.gov.br/ExibeSerie.aspx?serid=38590&module=M'>Tabela de preços do dólar</a></b> 
-                        para o mesmo período.
-                    </li>
-                </ul>
+                <b>Base de Dados:</b> Os dados utilizados no Datathon incluem informações educacionais e socioeconômicas dos estudantes atendidos pela ONG "Passos Mágicos". Além das bases de dados, também estão disponíveis relatórios de pesquisa para ajudar os participantes a entenderem melhor o contexto e o impacto da ONG.
+            </p>
+            <p>
+                <b>Entrega do Projeto:</b> Os participantes podem optar por entregar uma ou ambas as propostas. Para a proposta analítica, a entrega deve incluir um dashboard e um relatório de análise. Para a proposta preditiva, a entrega deve incluir um modelo preditivo implementado no Streamlit.
+            </p>
+            <p>
+                Os projetos podem ser compartilhados por meio de um repositório no GitHub, incluindo todos os arquivos utilizados e links para o dashboard ou modelo preditivo.
             </p>
         </div>
         ''',
