@@ -6,6 +6,8 @@ import seaborn as sns
 from sklearn.metrics import confusion_matrix, roc_curve, auc
 from sklearn.preprocessing import label_binarize
 from pathlib import Path
+pip install matplotlib
+
 
 # Função para carregar dados
 @st.cache_data(show_spinner=True)
