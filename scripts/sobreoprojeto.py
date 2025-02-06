@@ -52,5 +52,3 @@ def show():
         unsafe_allow_html=True
     )
 
-# Chamando a função show() para exibir o conteúdo
-show()
