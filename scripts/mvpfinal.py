@@ -7,7 +7,9 @@ from pathlib import Path
 def carregar_dados(caminho):
     """Carrega um dataset CSV e retorna o DataFrame."""
     try:
-        return pd.read_csv(caminho)
+        df = pd.read_csv(caminho)
+        df.columns = df.columns.str.strip().str.replace(" ", "_").str.lower()
+        return df
     except FileNotFoundError:
         st.error(f"Arquivo não encontrado: {caminho}")
         return pd.DataFrame()
@@ -15,19 +17,19 @@ def carregar_dados(caminho):
 def plot_curvas_roc(curva_roc, titulo):
     """
     Plota as curvas ROC diretamente a partir dos valores do CSV.
-    Espera que o CSV contenha as colunas 'FPR', 'TPR', 'Classe' e 'AUC'.
+    Espera que o CSV contenha as colunas 'fpr', 'tpr', 'classe' e 'auc'.
     """
-    if not all(col in curva_roc.columns for col in ['FPR', 'TPR', 'AUC', 'Classe']):
+    if not all(col in curva_roc.columns for col in ['fpr', 'tpr', 'auc', 'classe']):
         st.error("O arquivo não contém as colunas necessárias: 'FPR', 'TPR', 'Classe', 'AUC'.")
         return
 
-    curva_roc['Label'] = curva_roc['Classe'] + " (AUC = " + curva_roc['AUC'].round(6).astype(str) + ")"
+    curva_roc['label'] = curva_roc['classe'] + " (AUC = " + curva_roc['auc'].round(6).astype(str) + ")"
 
     chart = alt.Chart(curva_roc).mark_line().encode(
-        x=alt.X('FPR:Q', title='False Positive Rate'),
-        y=alt.Y('TPR:Q', title='True Positive Rate'),
-        color=alt.Color('Label:N', title='Classes (AUC)'),
-        tooltip=['Classe', 'FPR', 'TPR', 'AUC']
+        x=alt.X('fpr:Q', title='False Positive Rate'),
+        y=alt.Y('tpr:Q', title='True Positive Rate'),
+        color=alt.Color('label:N', title='Classes (AUC)'),
+        tooltip=['classe', 'fpr', 'tpr', 'auc']
     ).properties(
         title=titulo,
         width=700,
@@ -39,15 +41,13 @@ def plot_curvas_roc(curva_roc, titulo):
 def show():
     st.title('Análise de Modelos Preditivos')
     
-    # Caminho do diretório com os CSVs
-    diretorio = "datasets/"  # Atualize para o diretório onde estão seus arquivos CSV
+    diretorio = "datasets/"
     base_path = Path(diretorio)
     
     if not base_path.is_dir():
         st.error(f"O diretório especificado '{diretorio}' não existe.")
         return
     
-    # Arquivos esperados
     arquivos = {
         "Matriz de Confusão - Regressão Multinomial": "matriz_confusao_multinomial.csv",
         "Curvas ROC - Regressão Multinomial": "curvas_roc_multinomial.csv",
@@ -57,7 +57,6 @@ def show():
         "Curvas ROC - Rede Neural": "curvas_roc_rede_neural.csv"
     }
     
-    # Tabs no Streamlit
     abas = st.tabs(list(arquivos.keys()))
 
     for aba, (titulo, arquivo) in zip(abas, arquivos.items()):
@@ -67,17 +66,16 @@ def show():
         with aba:
             st.subheader(titulo)
             
-            if "Curvas ROC" in titulo:  # Verifica se o arquivo é de curva ROC
+            if "Curvas ROC" in titulo:
                 if dados.empty:
                     st.error(f"Os dados para {titulo} não puderam ser carregados.")
                 else:
                     plot_curvas_roc(dados, titulo)
-            else:  # Caso seja uma matriz de confusão
+            else:
                 if dados.empty:
                     st.error(f"Os dados para {titulo} não puderam ser carregados.")
                 else:
                     st.write(dados)
 
-# Executar o aplicativo
 if __name__ == "__main__":
     show()
