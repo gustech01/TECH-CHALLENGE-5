@@ -47,5 +47,6 @@ def show():
     with col_central:
         st.image(carregar_imagem("Passos-magicos-icon-cor.png"), use_container_width=True)
 
+# Executar o aplicativo
 if __name__ == "__main__":
     show()
