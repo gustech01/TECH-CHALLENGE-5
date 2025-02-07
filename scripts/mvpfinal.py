@@ -1,104 +1,81 @@
 import streamlit as st
 import pandas as pd
+import altair as alt
 from pathlib import Path
 
 @st.cache_data(show_spinner=True)
 def carregar_dados(caminho):
-    """Carrega um dataset CSV, retorna o DataFrame ou erro."""
+    """Carrega um dataset CSV e retorna o DataFrame."""
     try:
-        return pd.read_csv(caminho, usecols=lambda column: column not in ["Unnamed: 0"])
+        df = pd.read_csv(caminho)
+        df.columns = df.columns.str.strip().str.replace(" ", "_").str.lower()
+        return df
     except FileNotFoundError:
         st.error(f"Arquivo não encontrado: {caminho}")
         return pd.DataFrame()
 
-@st.cache_resource(show_spinner=True)
-def carregar_imagem(caminho):
-    """Carrega o caminho da imagem."""
-    imagem_path = Path(caminho)
-    if imagem_path.is_file():
-        return str(imagem_path)
-    else:
-        st.error(f"Imagem não encontrada: {caminho}")
-        return None
-
-def show():
-    # Logo FIAP
-    left, cent, right = st.columns(3)
-    with right:
-        imagem = carregar_imagem('imagens/fiap.png')
-        if imagem:
-            st.image(imagem)
-
-    # Título
-    st.title('Modelos Preditivos')
-
-    # Layout do aplicativo
-    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(['Matriz Multinomial', 'Curva ROC Multinomial', 'Matriz XGBoost', 'Curvas ROC XGBoost', 'Matriz Rede Neural', 'Curva Rede Neural'])
-
-    # Carregando as matrizes de confusão e curvas ROC
-    matriz_multinomial = carregar_dados("datasets/matriz_confusao_multinomial.csv")
-    curva_roc_multinomial = carregar_dados("datasets/curvas_roc_multinomial.csv")
-    
-    matriz_xgboost = carregar_dados("datasets/matriz_confusao_xgboost.csv")
-    curva_roc_xgboost = carregar_dados("datasets/curvas_roc_xgboost.csv")
-    
-    matriz_rede_neural = carregar_dados("datasets/matriz_confusao_rede_neural.csv")
-    curva_roc_rede_neural = carregar_dados("datasets/curvas_roc_rede_neural.csv")
-
-    if matriz_multinomial.empty or curva_roc_multinomial.empty or \
-       matriz_xgboost.empty or curva_roc_xgboost.empty or \
-       matriz_rede_neural.empty or curva_roc_rede_neural.empty:
-        st.error("Os arquivos de matriz de confusão ou curvas ROC não foram carregados corretamente.")
+def plot_curvas_roc(curva_roc, titulo):
+    """
+    Plota as curvas ROC diretamente a partir dos valores do CSV.
+    Espera que o CSV contenha as colunas 'fpr', 'tpr', 'classe' e 'auc'.
+    """
+    if not all(col in curva_roc.columns for col in ['fpr', 'tpr', 'auc', 'classe']):
+        st.error("O arquivo não contém as colunas necessárias: 'FPR', 'TPR', 'Classe', 'AUC'.")
         return
 
-    with tab1:
-        st.subheader("Matriz de Confusão - Regressão Multinomial")
-        st.write(matriz_multinomial)
+    curva_roc['label'] = curva_roc['classe'] + " (AUC = " + curva_roc['auc'].round(6).astype(str) + ")"
 
-    with tab2:
-        st.subheader("Curvas ROC - Regressão Multinomial")
-        df_combined_multinomial = pd.DataFrame()
-        for classe in curva_roc_multinomial['Classe'].unique():
-            dados_classe = curva_roc_multinomial[curva_roc_multinomial['Classe'] == classe]
-            dados_classe = dados_classe.rename(columns={"TPR": f"TPR_{classe}"})
-            if df_combined_multinomial.empty:
-                df_combined_multinomial = dados_classe[["FPR", f"TPR_{classe}"]]
+    chart = alt.Chart(curva_roc).mark_line().encode(
+        x=alt.X('fpr:Q', title='False Positive Rate'),
+        y=alt.Y('tpr:Q', title='True Positive Rate'),
+        color=alt.Color('label:N', title='Classes (AUC)'),
+        tooltip=['classe', 'fpr', 'tpr', 'auc']
+    ).properties(
+        title=titulo,
+        width=700,
+        height=400
+    ).interactive()
+
+    st.altair_chart(chart, use_container_width=True)
+
+def show():
+    st.title('Análise de Modelos Preditivos')
+    
+    diretorio = "datasets/"
+    base_path = Path(diretorio)
+    
+    if not base_path.is_dir():
+        st.error(f"O diretório especificado '{diretorio}' não existe.")
+        return
+    
+    arquivos = {
+        "Matriz de Confusão - Regressão Multinomial": "matriz_confusao_multinomial.csv",
+        "Curvas ROC - Regressão Multinomial": "curvas_roc_multinomial.csv",
+        "Matriz de Confusão - XGBoost": "matriz_confusao_xgboost.csv",
+        "Curvas ROC - XGBoost": "curvas_roc_xgboost.csv",
+        "Matriz de Confusão - Rede Neural": "matriz_confusao_rede_neural.csv",
+        "Curvas ROC - Rede Neural": "curvas_roc_rede_neural.csv"
+    }
+    
+    abas = st.tabs(list(arquivos.keys()))
+
+    for aba, (titulo, arquivo) in zip(abas, arquivos.items()):
+        caminho_arquivo = base_path / arquivo
+        dados = carregar_dados(caminho_arquivo)
+        
+        with aba:
+            st.subheader(titulo)
+            
+            if "Curvas ROC" in titulo:
+                if dados.empty:
+                    st.error(f"Os dados para {titulo} não puderam ser carregados.")
+                else:
+                    plot_curvas_roc(dados, titulo)
             else:
-                df_combined_multinomial = pd.merge(df_combined_multinomial, dados_classe[["FPR", f"TPR_{classe}"]], on="FPR", how="outer")
-        st.line_chart(df_combined_multinomial.set_index('FPR'), height=400, width=700)
+                if dados.empty:
+                    st.error(f"Os dados para {titulo} não puderam ser carregados.")
+                else:
+                    st.write(dados)
 
-    with tab3:
-        st.subheader("Matriz de Confusão - XGBoost")
-        st.write(matriz_xgboost)
-
-    with tab4:
-        st.subheader("Curvas ROC - XGBoost")
-        df_combined_xgboost = pd.DataFrame()
-        for classe in curva_roc_xgboost['Classe'].unique():
-            dados_classe = curva_roc_xgboost[curva_roc_xgboost['Classe'] == classe]
-            dados_classe = dados_classe.rename(columns={"TPR": f"TPR_{classe}"})
-            if df_combined_xgboost.empty:
-                df_combined_xgboost = dados_classe[["FPR", f"TPR_{classe}"]]
-            else:
-                df_combined_xgboost = pd.merge(df_combined_xgboost, dados_classe[["FPR", f"TPR_{classe}"]], on="FPR", how="outer")
-        st.line_chart(df_combined_xgboost.set_index('FPR'), height=400, width=700)
-
-    with tab5:
-        st.subheader("Matriz de Confusão - Rede Neural")
-        st.write(matriz_rede_neural)
-
-    with tab6:
-        st.subheader("Curvas ROC - Rede Neural")
-        df_combined_nn = pd.DataFrame()
-        for classe in curva_roc_rede_neural['Classe'].unique():
-            dados_classe = curva_roc_rede_neural[curva_roc_rede_neural['Classe'] == classe]
-            dados_classe = dados_classe.rename(columns={"TPR": f"TPR_{classe}"})
-            if df_combined_nn.empty:
-                df_combined_nn = dados_classe[["FPR", f"TPR_{classe}"]]
-            else:
-                df_combined_nn = pd.merge(df_combined_nn, dados_classe[["FPR", f"TPR_{classe}"]], on="FPR", how="outer")
-        st.line_chart(df_combined_nn.set_index('FPR'), height=400, width=700)
-
-# Exibir o aplicativo
 if __name__ == "__main__":
     show()
