@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import altair as alt
 
-
 @st.cache_data(show_spinner=True)
 def carregar_dados(caminho):
     """Carrega um dataset CSV e retorna o DataFrame."""
@@ -11,7 +10,6 @@ def carregar_dados(caminho):
     except FileNotFoundError:
         st.error(f"Arquivo não encontrado: {caminho}")
         return pd.DataFrame()
-
 
 def plot_curvas_roc(curva_roc, titulo):
     """
@@ -24,7 +22,7 @@ def plot_curvas_roc(curva_roc, titulo):
         return
 
     # Criar uma nova coluna para exibir as labels com o AUC
-    curva_roc['Label'] = curva_roc['Classe'] + " (AUC = " + curva_roc['AUC'].round(2).astype(str) + ")"
+    curva_roc['Label'] = curva_roc['Classe'] + " (AUC = " + curva_roc['AUC'].round(6).astype(str) + ")"
 
     # Criar gráfico com Altair
     chart = alt.Chart(curva_roc).mark_line().encode(
@@ -40,10 +38,9 @@ def plot_curvas_roc(curva_roc, titulo):
 
     st.altair_chart(chart, use_container_width=True)
 
-
 def show():
     # Título
-    st.title('Curvas ROC - Visualização Simples')
+    st.title('Curvas ROC - Visualização Direta')
 
     # Upload de arquivo CSV
     uploaded_file = st.file_uploader("Carregue o arquivo CSV contendo as curvas ROC", type=["csv"])
@@ -55,7 +52,7 @@ def show():
 
         # Plotar gráfico
         st.subheader("Gráfico de Curvas ROC")
-        plot_curvas_roc(curva_roc, "Curvas ROC")
+        plot_curvas_roc(curva_roc, "Curvas ROC - Exibição Direta")
 
 
 # Executar o aplicativo
