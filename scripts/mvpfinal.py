@@ -1,8 +1,7 @@
 import streamlit as st
 import pandas as pd
-import altair as alt
-from sklearn.metrics import auc
-
+from pathlib import Path
+from PIL import Image
 
 @st.cache_data(show_spinner=True)
 def carregar_dados(caminho):
@@ -13,89 +12,86 @@ def carregar_dados(caminho):
         st.error(f"Arquivo não encontrado: {caminho}")
         return pd.DataFrame()
 
+@st.cache_resource(show_spinner=True)
+def carregar_imagem(caminho):
+    """Carrega o caminho da imagem."""
+    imagem_path = Path(caminho)
+    if imagem_path.is_file():
+        return Image.open(imagem_path)
+    else:
+        st.error(f"Imagem não encontrada: {caminho}")
+        return None
 
-def calcular_auc(df):
-    """
-    Calcula o AUC para cada classe no DataFrame.
-    """
-    # Verifica se 'FPR' e 'TPR' existem para cálculo de AUC
-    if 'FPR' not in df.columns or 'TPR' not in df.columns:
-        st.error("As colunas 'FPR' ou 'TPR' não foram encontradas no DataFrame.")
-        return df
-
-    # Calcula o AUC para cada classe
-    auc_values = df.groupby('Classe').apply(
-        lambda group: auc(group['FPR'], group['TPR'])
-    ).reset_index()
-    auc_values.columns = ['Classe', 'AUC']
-
-    # Junta os valores de AUC ao DataFrame original
-    return df.merge(auc_values, on='Classe', how='left')
-
-
-def plot_curvas_roc_altair(curva_roc, titulo):
-    """
-    Plota as curvas ROC usando a biblioteca Altair.
-    """
-    # Verificar se a coluna 'AUC' existe
-    if 'AUC' not in curva_roc.columns:
-        st.error("A coluna 'AUC' não foi encontrada no DataFrame. Verifique os dados carregados.")
-        st.write("Colunas disponíveis no DataFrame:", curva_roc.columns.tolist())
-        return
-
-    # Criar rótulo para as legendas
-    curva_roc['AUC_label'] = curva_roc['Classe'] + " (AUC = " + curva_roc['AUC'].round(2).astype(str) + ")"
-
-    # Criar gráfico com Altair
-    chart = alt.Chart(curva_roc).mark_line().encode(
-        x=alt.X('FPR:Q', title='False Positive Rate'),
-        y=alt.Y('TPR:Q', title='True Positive Rate'),
-        color=alt.Color('AUC_label:N', title='Classes'),
-        tooltip=['Classe', 'AUC', 'FPR', 'TPR']
-    ).properties(
-        title=titulo,
-        width=700,
-        height=400
-    ).interactive()
-
-    st.altair_chart(chart, use_container_width=True)
-
+def plot_curvas_roc(curva_roc, tab_title):
+    df_combined = pd.DataFrame()
+    legendas = {}
+    for classe in curva_roc['Classe'].unique():
+        dados_classe = curva_roc[curva_roc['Classe'] == classe]
+        dados_classe = dados_classe.rename(columns={"TPR": f"TPR_{classe}"})
+        legendas[f"AUC_{classe}"] = f"{classe} (AUC = {((dados_classe['FPR'] - dados_classe[f'TPR_{classe}']).abs().sum()):.2f})"
+        if df_combined.empty:
+            df_combined = dados_classe[["FPR", f"TPR_{classe}"]]
+        else:
+            df_combined = pd.merge(df_combined, dados_classe[["FPR", f"TPR_{classe}"]], on="FPR", how="outer")
+    st.line_chart(df_combined.set_index('FPR'), height=400, width=700)
+    st.write("Legenda")
+    for key, value in legendas.items():
+        st.write(value)
 
 def show():
+    # Logo FIAP
+    left, cent, right = st.columns(3)
+    with right:
+        imagem = carregar_imagem('imagens/fiap.png')
+        if imagem:
+            st.image(imagem)
+
     # Título
     st.title('Modelos Preditivos')
 
     # Layout do aplicativo
-    tab1, tab2, tab3 = st.tabs(['Curva ROC Multinomial', 'Curvas ROC XGBoost', 'Curva ROC Rede Neural'])
+    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(['Matriz Multinomial', 'Curva ROC Multinomial', 'Matriz XGBoost', 'Curvas ROC XGBoost', 'Matriz Rede Neural', 'Curva ROC Rede Neural'])
 
-    # Carregando as curvas ROC
+    # Carregando as matrizes de confusão e curvas ROC
+    matriz_multinomial = carregar_dados("datasets/matriz_confusao_multinomial.csv")
     curva_roc_multinomial = carregar_dados("datasets/curvas_roc_multinomial.csv")
+    
+    matriz_xgboost = carregar_dados("datasets/matriz_confusao_xgboost.csv")
     curva_roc_xgboost = carregar_dados("datasets/curvas_roc_xgboost.csv")
+    
+    matriz_rede_neural = carregar_dados("datasets/matriz_confusao_rede_neural.csv")
     curva_roc_rede_neural = carregar_dados("datasets/curvas_roc_rede_neural.csv")
 
-    # Verificação de carregamento
-    if curva_roc_multinomial.empty or curva_roc_xgboost.empty or curva_roc_rede_neural.empty:
-        st.error("Os arquivos de curvas ROC não foram carregados corretamente.")
+    if matriz_multinomial.empty or curva_roc_multinomial.empty or \
+       matriz_xgboost.empty or curva_roc_xgboost.empty or \
+       matriz_rede_neural.empty or curva_roc_rede_neural.empty:
+        st.error("Os arquivos de matriz de confusão ou curvas ROC não foram carregados corretamente.")
         return
 
-    # Calcular AUC
-    curva_roc_multinomial = calcular_auc(curva_roc_multinomial)
-    curva_roc_xgboost = calcular_auc(curva_roc_xgboost)
-    curva_roc_rede_neural = calcular_auc(curva_roc_rede_neural)
-
     with tab1:
-        st.subheader("Curvas ROC - Regressão Multinomial")
-        plot_curvas_roc_altair(curva_roc_multinomial, "Curvas ROC - Regressão Multinomial")
+        st.subheader("Matriz de Confusão - Regressão Multinomial")
+        st.write(matriz_multinomial)
 
     with tab2:
-        st.subheader("Curvas ROC - XGBoost")
-        plot_curvas_roc_altair(curva_roc_xgboost, "Curvas ROC - XGBoost")
+        st.subheader("Curvas ROC - Regressão Multinomial")
+        plot_curvas_roc(curva_roc_multinomial, "Curvas ROC - Regressão Multinomial")
 
     with tab3:
+        st.subheader("Matriz de Confusão - XGBoost")
+        st.write(matriz_xgboost)
+
+    with tab4:
+        st.subheader("Curvas ROC - XGBoost")
+        plot_curvas_roc(curva_roc_xgboost, "Curvas ROC - XGBoost")
+
+    with tab5:
+        st.subheader("Matriz de Confusão - Rede Neural")
+        st.write(matriz_rede_neural)
+
+    with tab6:
         st.subheader("Curvas ROC - Rede Neural")
-        plot_curvas_roc_altair(curva_roc_rede_neural, "Curvas ROC - Rede Neural")
+        plot_curvas_roc(curva_roc_rede_neural, "Curvas ROC - Rede Neural")
 
-
-# Executar o aplicativo
+# Exibir o aplicativo
 if __name__ == "__main__":
     show()
