@@ -20,7 +20,18 @@ def carregar_dados(caminho):
     """Carrega um dataset CSV, normaliza os nomes das colunas e retorna o DataFrame."""
     try:
         df = pd.read_csv(caminho)
+
+        # Normalizar os nomes das colunas
         df.columns = df.columns.str.strip().str.replace(" ", "_").str.lower()
+
+        # Se existir a coluna "Unnamed: 0", renomeá-la para "Classe"
+        if "unnamed:_0" in df.columns:
+            df.rename(columns={"unnamed:_0": "Classe"}, inplace=True)
+
+        # Se a primeira coluna parecer conter índices (0,1,2,3,4), substituir pelos nomes reais
+        if df["Classe"].dtype == 'int64':  # Se os valores forem números
+            df["Classe"] = df["Classe"].map(lambda x: df.columns[x+1] if x < len(df.columns)-1 else x)
+
         return df
     except FileNotFoundError:
         st.error(f"Arquivo não encontrado: {caminho}")
