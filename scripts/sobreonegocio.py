@@ -27,7 +27,7 @@ def show():
     st.divider()  # Linha divisória para separar o conteúdo
     _, col_central, _ = st.columns([1, 2, 1])  # Coluna centralizada
     with col_central:
-        st.image(carregar_imagem("Passos-magicos-icon-cor.png"), use_column_width=True)
+        st.image(carregar_imagem("Passos-magicos-icon-cor.png"), use_container_width=True)
 
 # Executar o aplicativo
 if __name__ == "__main__":
