@@ -17,7 +17,7 @@ def plot_curvas_roc(curva_roc, titulo):
     Plota as curvas ROC diretamente a partir dos valores do CSV.
     Espera que o CSV contenha as colunas 'FPR', 'TPR', 'Classe' e 'AUC'.
     """
-    if not all(col in curva_roc.columns for col in ['FPR', 'TPR', 'Classe', 'AUC']):
+    if not all(col in curva_roc.columns for col in ['FPR', 'TPR', 'AUC', 'Classe']):
         st.error("O arquivo não contém as colunas necessárias: 'FPR', 'TPR', 'Classe', 'AUC'.")
         return
 
