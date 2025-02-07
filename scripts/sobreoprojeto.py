@@ -2,21 +2,26 @@ import streamlit as st
 from PIL import Image
 import os
 
+# Função para carregar imagens com verificação de existência
+def carregar_imagem(nome_arquivo):
+    caminho = os.path.join("imagens", nome_arquivo)  # Define o caminho completo
+    if os.path.exists(caminho):  # Verifica se a imagem existe
+        return Image.open(caminho)
+    else:
+        st.error(f"Imagem '{nome_arquivo}' não encontrada. Verifique o caminho e tente novamente.")
+        return None
+
 def show():
     # Layout inicial com imagem no canto direito
     left, cent, right = st.columns(3)
     with right:
-        # Verifica se o arquivo de imagem existe
-        if os.path.exists('imagens/fiap.png'):
-            # Carrega e exibe a imagem
-            imagem = Image.open('imagens/fiap.png')
-            st.image(imagem, use_container_width=True)
-        else:
-            st.error("Imagem não encontrada. Verifique o caminho e tente novamente.")
+        imagem_fiap = carregar_imagem("fiap.png")
+        if imagem_fiap:
+            st.image(imagem_fiap, use_container_width=True)
 
     # Título do projeto
     st.title('Sobre o Projeto')
-  
+
     st.markdown(
         '''
         <div style="text-align: justify;">
@@ -35,17 +40,18 @@ def show():
             <p>
                 <b>Base de Dados Disponível:</b> A base de dados completa pode ser acessada <a href="https://drive.google.com/drive/folders/1Z1j6uzzCOgjB2a6i3Ym1pmJRsasfm7cD" target="_blank">neste link</a>.
             </p>
-            
         </div>
         ''',
         unsafe_allow_html=True
     )
 
- # Espaço centralizado para a imagem no rodapé
+    # Espaço centralizado para a imagem no rodapé
     st.divider()  # Linha divisória para separar o conteúdo
     _, col_central, _ = st.columns([1, 2, 1])  # Coluna centralizada
     with col_central:
-        st.image(carregar_imagem("Passos-magicos-icon-cor.png"), use_container_width=True)
+        imagem_passos = carregar_imagem("Passos-magicos-icon-cor.png")
+        if imagem_passos:
+            st.image(imagem_passos, use_container_width=True)
 
 # Executar o aplicativo
 if __name__ == "__main__":
