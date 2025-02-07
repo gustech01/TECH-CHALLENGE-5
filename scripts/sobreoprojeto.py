@@ -41,5 +41,11 @@ def show():
         unsafe_allow_html=True
     )
 
+ # Espaço centralizado para a imagem no rodapé
+    st.divider()  # Linha divisória para separar o conteúdo
+    _, col_central, _ = st.columns([1, 2, 1])  # Coluna centralizada
+    with col_central:
+        st.image(carregar_imagem("Passos-magicos-icon-cor.png"), use_container_width=True)
+
 if __name__ == "__main__":
     show()
