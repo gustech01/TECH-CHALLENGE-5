@@ -17,11 +17,24 @@ def carregar_imagem(nome_arquivo):
 
 @st.cache_data(show_spinner=True)
 def carregar_dados(caminho):
-    """Carrega um dataset CSV, normaliza os nomes das colunas e retorna o DataFrame."""
+    """Carrega um dataset CSV, remove a coluna 'Unnamed: 0' se existir e renomeia para 'Classe'."""
     try:
         df = pd.read_csv(caminho)
+
+        # Normaliza os nomes das colunas
         df.columns = df.columns.str.strip().str.replace(" ", "_").str.lower()
+
+        # Se existir a coluna "unnamed:_0", renomeá-la para "classe"
+        if "unnamed:_0" in df.columns:
+            df.rename(columns={"unnamed:_0": "classe"}, inplace=True)
+
+        # Caso "Unnamed: 0" tenha sido carregado como índice
+        if df.index.name == "Unnamed: 0":
+            df.index.name = "classe"
+            df.reset_index(inplace=True)
+
         return df
+
     except FileNotFoundError:
         st.error(f"Arquivo não encontrado: {caminho}")
         return pd.DataFrame()
