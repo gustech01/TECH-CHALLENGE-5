@@ -17,22 +17,29 @@ def carregar_imagem(nome_arquivo):
 
 @st.cache_data(show_spinner=True)
 def carregar_dados(caminho):
-    """Carrega um dataset CSV, normaliza os nomes das colunas e retorna o DataFrame."""
+    """Carrega um dataset CSV, normaliza os nomes das colunas e trata a coluna 'Classe'."""
     try:
         df = pd.read_csv(caminho)
 
         # Normalizar os nomes das colunas
         df.columns = df.columns.str.strip().str.replace(" ", "_").str.lower()
 
-        # Se existir a coluna "Unnamed: 0", renomeá-la para "Classe"
+        # Se existir a coluna "unnamed:_0", renomeá-la para "classe"
         if "unnamed:_0" in df.columns:
-            df.rename(columns={"unnamed:_0": "Classe"}, inplace=True)
+            df.rename(columns={"unnamed:_0": "classe"}, inplace=True)
 
-        # Se a primeira coluna parecer conter índices (0,1,2,3,4), substituir pelos nomes reais
-        if df["Classe"].dtype == 'int64':  # Se os valores forem números
-            df["Classe"] = df["Classe"].map(lambda x: df.columns[x+1] if x < len(df.columns)-1 else x)
+        # **Verificação Extra:** Se "classe" não existir, exibe um alerta e continua.
+        if "classe" not in df.columns:
+            st.warning(f"Atenção: O arquivo '{caminho}' não contém uma coluna 'Classe'.")
+            return df
+
+        # **Substituir índices numéricos pelos nomes das classes, se possível**
+        if df["classe"].dtype == 'int64':  # Se os valores forem números
+            if len(df.columns) > 1:
+                df["classe"] = df["classe"].map(lambda x: df.columns[x+1] if x < len(df.columns)-1 else x)
 
         return df
+
     except FileNotFoundError:
         st.error(f"Arquivo não encontrado: {caminho}")
         return pd.DataFrame()
